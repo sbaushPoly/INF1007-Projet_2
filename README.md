@@ -7,6 +7,6 @@
 ## Source
 L'ensemble de données utilisée pour ce projet est la suivante:
 [Digital Distraction vs Academic Performance](https://www.kaggle.com/datasets/neurocipher/digital-distraction-vs-academic-performance)
-Par NeuroCipher sur Kaggle
-## Lisence
+par NeuroCipher sur Kaggle
+## Licence
 [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
