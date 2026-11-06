@@ -1,85 +1,92 @@
+import os
 import numpy as np
 import pandas as pd
-import donnees
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 
-def train(X_train: np.ndarray, y_train: np.ndarray) -> LinearRegression:
+
+def charger_donnees(fichier):
+    """
+    Charge les données à partir d'un fichier CSV.
+
+    Args:
+        fichier (str): Le chemin vers le fichier CSV. 
+
+    Returns:
+        pd.DataFrame: Un DataFrame contenant les données chargées.
+    """
+    if not os.path.exists(fichier):
+        raise FileNotFoundError(f"Le fichier {fichier} n'existe pas.")
+    try:
+        donnees = pd.read_csv(fichier)
+        return donnees
+    except FileNotFoundError as e:
+        print(f"Erreur lors du chargement des données : {e}")
+
+def separer_donnees(donnees: pd.DataFrame):
+    """
+    Sépare les données en ensembles d'entraînement et de validation.
+
+    Args:
+        donnees (pd.DataFrame): Le DataFrame contenant les données à séparer.
+
+    Returns:
+        tuple: Quatre objets, x_train, x_val, y_train, y_val.
+    """
+    # Transforme automatiquement TOUTES les colonnes de type str / object du DataFrame
+    donnees_encode = pd.get_dummies(donnees, drop_first=True, dtype=float)
+
+    # Désigne les variables indépendants et la variable dépendant
+    X = donnees_encode.drop(columns=['final_exam_score', 'student_id'])
+    y = donnees_encode['final_exam_score']
+
+    #Séparer le jeu de données en ensembles d'entraînement et de validation
+    x_train, x_val, y_train, y_val = train_test_split(X, y, test_size= 0.2, train_size=0.8, random_state=0)
+    
+    return x_train, x_val, y_train, y_val
+
+def entrainer_modele(x_train: np.ndarray, y_train: np.ndarray) -> LinearRegression:
     """
     Entraine un modèle de régression linéaire sur les données fournies
     
     parameters:
     ----------
-    X_train : np.ndarray
-    Matrice des variables explicatives pour l'entrainement
+    x_train : np.ndarray
+        Matrice des variables explicatives pour l'entrainement
     y_train : np.ndarray
-    Vecteur des valeurs cibles d'entrainement
+        Vecteur des valeurs cibles d'entrainement
 
     Returns
     ---------
     model : LinearRegression
-    Modèle de régression linéaire ajusté sur les données.
+        Modèle de régression linéaire ajusté sur les données.
     """
 
-    modele = LinearRegression
-    modele.fit(X_train, y_train)
+    modele = LinearRegression()
+    modele.fit(x_train, y_train)
     return modele
 
-def eval(modele: LinearRegression, X_val: np.ndarray, y_val: np.ndarray):
-    """
-    Évalue les performances du modèle sur un ensemble de validation
-
-    Parameters
-    ----------
-    model : LinearRegression
-        Modèle de régression linéaire préalablement entraîné.
-    X_val : np.ndarray
-        Matrice des variables explicatives pour la validation
-    y_val : np.ndarray
-        Vecteur des valeurs cibles pour la validation
-    
-    Returns
-    -------
-    metrics : dict[str, float]
-        Dictionnaire contenant les métriques, où les clés sont :
-
-        - ``rmse`` : erreur quadratique moyenne racine.
-        - ``mse``  : erreur quadratique moyenne.
-        - ``r2``   : coefficient de détermination R².
-    """
-    y_pred = modele.predict(X_val)
-    #mae = mean_absolute_error(y_val, y_pred)
-    mse = mean_squared_error(y_pred, y_val)
-    rmse = np.sqrt(mse)
-    r2 = r2_score(y_val, y_pred)
-
-    return {"rmse": rmse, "mse": mse, "r2": r2}
+def sauvegarder_modele(modele):
+    """Sauvegarde le modèle entraîné dans un fichier."""
+    joblib.dump(modele, "modele_entrainé.joblib")
 
 
 def main():
-    # Transforme automatiquement TOUTES les colonnes de type str / object du DataFrame
-    donnees_encode = pd.get_dummies(donnees, drop_first=True, dtype=int)
+    dossier_actuel = os.path.dirname(os.path.abspath(__file__))
+    chemin = os.path.join(dossier_actuel, "archive", "donnees_propres.csv") #modifier archive
+    donnees = charger_donnees(chemin)
 
-    # Désigne les variables indépendants et la variable dépendant
-    X = donnees_encode.drop(columns=['final_exam_score', 'student_id', 'age', 'gender'])
-    y = donnees_encode['final_exam_score']
+    x_train, x_val, y_train, y_val = separer_donnees(donnees)
 
-    #Séparer le jeu de données en ensembles d'entraînement et de validation
-    x_train, x_val, y_train, y_val = train_test_split(X, y, test_size= 0.2, train_size=0.8, random_state=0)
+    modele = entrainer_modele(x_train, y_train)
 
-    #Instancier et entraîner votre modèle et effectuer la validation du modèle
-    modele = train(x_train, y_train)
-    results = eval(modele, x_val, y_val)
+    sauvegarder_modele(modele)
 
-    #Afficher les métriques, les coefficients et l'ordonnée à l'origine du modèle
-    print(f"validation RMSE : {results['rmse']:.2f}")
-    print(f"validation MSE : {results['mse']:.2f}")
-    print(f"validation R² : {results['r2']:.2f}")
-    print(f"Coefficients : {modele.coef_}")
-    print(f"Ordonnée à l'origine : {modele.intercept_}")
+    return
 
 
 if __name__ == "__main__":
     main()
+
 
