@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def charger_donnees(fichier):
+def charger_donnees(fichier: str) -> pd.DataFrame:
     """
     Charge les données à partir d'un fichier CSV.
 
@@ -15,13 +15,13 @@ def charger_donnees(fichier):
     if not os.path.exists(fichier):
         raise FileNotFoundError(f"Le fichier {fichier} n'existe pas.")
     try:
-        donnees = pd.read_csv(fichier)
+        donnees = pd.read_csv(fichier) 
         return donnees
     except FileNotFoundError as e:
         print(f"Erreur lors du chargement des données : {e}")
 
 
-def afficher_graphiques(donnees, colonnes, titre):
+def afficher_graphiques(donnees: pd.DataFrame, colonnes: list, titre: str):
     """
     Affiche des graphiques pour l'exploration des données.
 
@@ -36,7 +36,7 @@ def afficher_graphiques(donnees, colonnes, titre):
     plt.show()
 
 
-def controle_habitudes_quotidiennes(donnees):
+def controle_habitudes_quotidiennes(donnees: pd.DataFrame) -> pd.DataFrame:
     """
     Vérifie que la somme des heures pour les habitudes quotidiennes ne dépasse pas 24 heures.
 
@@ -46,7 +46,8 @@ def controle_habitudes_quotidiennes(donnees):
     Returns:
         pd.DataFrame: Un DataFrame filtré ne contenant que les lignes respectant la contrainte.
     """
-    habitudes_quotidiennes = ["study_hours_per_day", "smartphone_usage_hours", "social_media_hours", 
+    # Note: "social_media_hours" est considéré comme déjà inclus dans "smartphone_usage_hours" pour éviter le double comptage.
+    habitudes_quotidiennes = ["study_hours_per_day", "smartphone_usage_hours", 
                               "gaming_hours", "streaming_hours", "sleep_hours", "exercise_hours"]
     donnees["habitudes_heures"] = donnees[habitudes_quotidiennes].sum(axis=1)
     donnees_filtrees = donnees[donnees["habitudes_heures"] <= 24].copy()
@@ -57,7 +58,7 @@ def controle_habitudes_quotidiennes(donnees):
     return donnees_filtrees
 
 
-def nettoyer_string(colonne):
+def nettoyer_string(colonne: str):
     """
     Supprime les espaces et mets le texte en minuscules.
 
@@ -68,11 +69,12 @@ def nettoyer_string(colonne):
     donnees[colonne] = donnees[colonne].str.lower()
     return()
 
-def range_respect(colonne, minimum, maximum):
+def range_respect(donnees: pd.DataFrame, colonne: str, minimum: float, maximum: float):
     """
     Conserve uniquement les valeurs dans la plage spécifiée pour une colonne donnée.
     
     Args:
+        donnees (pd.DataFrame): Le DataFrame à filtrer.
         colonne (str): Le nom de la colonne à vérifier.
         minimum (float): La valeur minimale acceptable.
         maximum (float): La valeur maximale acceptable.
@@ -80,7 +82,7 @@ def range_respect(colonne, minimum, maximum):
     donnees = donnees[(donnees[colonne] >= minimum) & (donnees[colonne] <= maximum)]
     return()
 
-def nettoyer_donnees(donnees):
+def nettoyer_donnees(donnees: pd.DataFrame) -> pd.DataFrame:
     """
     Nettoie le DataFrame en supprimant les valeurs aberrantes et en filtrant les données.
 
@@ -99,10 +101,10 @@ def nettoyer_donnees(donnees):
         nettoyer_string(colonne)
 
     # Nettoyage des colonnes numériques avec des plages spécifiques
-    range_respect("class_attendance_percent", 0, 100)
-    range_respect("assignment_completion_percent", 0, 100)
-    range_respect("motivation_level", 0, 10)
-    range_respect("final_exam_score", 0, 100)
+    range_respect(donnees, "class_attendance_percent", 0, 100)
+    range_respect(donnees, "assignment_completion_percent", 0, 100)
+    range_respect(donnees, "motivation_level", 0, 10)
+    range_respect(donnees, "final_exam_score", 0, 100)
 
     # Nettoyage pour vérifier la cohérence des habitudes quotidiennes
     donnees = controle_habitudes_quotidiennes(donnees)
