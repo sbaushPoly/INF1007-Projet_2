@@ -10,3 +10,9 @@ L'ensemble de données utilisée pour ce projet est la suivante:
 par NeuroCipher sur Kaggle
 ## Licence
 [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+## Documentation consultée
+Documentation tkinter : [https://docs.python.org/3/library/tkinter.html#](https://docs.python.org/3/library/tkinter.html#)
+
+## Sources des images
+Arrière plan: College Ruled Paper par BlazingFireBug sur DeviantArt : [https://www.deviantart.com/blazingfirebug/art/College-Ruled-Paper-438389060](https://www.deviantart.com/blazingfirebug/art/College-Ruled-Paper-438389060)
