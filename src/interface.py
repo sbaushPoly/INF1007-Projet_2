@@ -2,7 +2,7 @@ import tkinter
 from tkinter import ttk
 from tkinter import font
 
-def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1)->None:
+def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation = True)->None:
     '''
     Cache les éléments de la page actuellement visible et fait apparaitre les éléments de la prochaine page.
     Entrées:
@@ -13,6 +13,11 @@ def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coord
     Aucune sortie
     '''
     # -- Ajouter options sans animation (directement mettre prochaine à x=0, y=0) --
+    if animation == False:
+        actuelle.place_forget()
+        prochaine.place(x=0, y=0, width=1600, height=900)
+        return
+
     if direction != 1 and direction != -1:
         raise ValueError('La valeur de la direction est invalide')
     
@@ -107,7 +112,7 @@ bouton_retour.place(anchor = 'n', relx=0.5, rely = 0.8)
 
 #pages question
 class PageQuestion:
-    def __init__(self, type, question):
+    def __init__(self, type, question, options=None):
         self.page = ttk.Frame(master=root)
         arriere_plan = tkinter.Label(self.page, image=image_arriere_plan).place(x=0,y=0,relwidth=1,relheight=1)
         titre = ttk.Label(self.page, text=question, font=('Ink Free', 40), background='white').place(anchor = 'n', relx=0.5, rely = 0.25)
@@ -116,6 +121,16 @@ class PageQuestion:
             self.entree_reponse = ttk.Entry(self.page, textvariable=self.reponse, font=('Ink Free', 20)).place(anchor = 'n', relx=0.5, rely = 0.5, relwidth=0.2)
         elif type == 'choix':
             # -- Paramètres de Menubutton et implémentation des options à compléter --
+            if options == None:
+                options = [] # la liste des choix possibles est vide
+            self.entree_reponse = ttk.Combobox(
+                self.page, 
+                textvariable=self.reponse, 
+                values=options, 
+                state="readonly",  # Empêche l'utilisateur d'écrire un texte personnalisé au clavier
+                font=('Ink Free', 20)
+            )
+            self.reponse = tkinter.StringVar
             self.entree_reponse = ttk.Menubutton(self.page).place(anchor = 'n', relx=0.5, rely = 0.5, relwidth=0.2)
         else:
             raise ValueError(f'Le type de question choisi est invalide')
