@@ -2,6 +2,9 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
+def implementation_test_initial():
+    return True
+
 def charger_donnees(fichier: str) -> pd.DataFrame:
     """
     Charge les données à partir d'un fichier CSV.
@@ -21,7 +24,7 @@ def charger_donnees(fichier: str) -> pd.DataFrame:
         print(f"Erreur lors du chargement des données : {e}")
 
 
-def afficher_graphiques(donnees: pd.DataFrame, colonnes: list, titre: str):
+def afficher_graphiques(donnees: pd.DataFrame, colonnes: list, titre: str, type_graphique: str, sauvegarder: bool=False):
     """
     Affiche des graphiques pour l'exploration des données.
 
@@ -31,9 +34,18 @@ def afficher_graphiques(donnees: pd.DataFrame, colonnes: list, titre: str):
         titre (str): Le titre du graphique.
     """
     plt.figure(figsize=(10, 6))
-    plt.boxplot(donnees[colonnes])
+    if type_graphique == 'boxplot':
+        plt.boxplot(donnees[colonnes])
+    elif type_graphique == 'hist':
+        plt.hist(x=donnees[colonnes], bins=12)
+    else:
+        raise ValueError('Le type de graphique est invalide')
     plt.title(titre)
-    plt.show()
+    if sauvegarder:
+        chemin = 'graphiques/'+colonnes+'.png'
+        plt.savefig(chemin)
+    else:
+        plt.show()
 
 
 def controle_habitudes_quotidiennes(donnees: pd.DataFrame) -> pd.DataFrame:
@@ -122,8 +134,15 @@ donnees = charger_donnees(chemin)
 #----------------------------
 print(donnees.dtypes)
 print(donnees.describe()) 
-afficher_graphiques(donnees, "age", "Distribution de l'âge des étudiants")
-afficher_graphiques(donnees, "caffeine_intake_cups", "Distribution de la consommation de caféine")
+afficher_graphiques(donnees, "age", "Distribution de l'âge des étudiants", 'boxplot')
+afficher_graphiques(donnees, "caffeine_intake_cups", "Distribution de la consommation de caféine", 'boxplot')
+afficher_graphiques(donnees, 'study_hours_per_day', "Distribution du temps d'étude en heures", 'boxplot')
+afficher_graphiques(donnees, 'smartphone_usage_hours', "Distribution du temps d'utilisation du cellulaire", 'boxplot')
+afficher_graphiques(donnees, 'social_media_hours', "Distribution du temps d'utilisation de résaux sociaux", 'boxplot')
+afficher_graphiques(donnees, 'gaming_hours', "Distribution du temps consacré aux jeux vidéo", 'boxplot')
+afficher_graphiques(donnees, 'streaming_hours', "Distribution du temps consacré aux services de diffusion continu", 'boxplot')
+afficher_graphiques(donnees, 'sleep_hours', "Distribution du temps de sommeil", 'boxplot')
+afficher_graphiques(donnees, 'exercise_hours', "Distribution du temps d'acivité physique", 'boxplot')
 
 # Conclusion :
 # Aucune valeur aberrante significative observée
