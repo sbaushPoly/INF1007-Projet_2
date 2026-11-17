@@ -59,7 +59,7 @@ def controle_habitudes_quotidiennes(donnees: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Un DataFrame filtré ne contenant que les lignes respectant la contrainte.
     """
     # Note: "social_media_hours" est considéré comme déjà inclus dans "smartphone_usage_hours" pour éviter le double comptage.
-    habitudes_quotidiennes = ["study_hours_per_day", "smartphone_usage_hours", 
+    habitudes_quotidiennes = ["study_hours_per_day", "social_media_hours", 
                               "gaming_hours", "streaming_hours", "sleep_hours", "exercise_hours"]
     donnees["habitudes_heures"] = donnees[habitudes_quotidiennes].sum(axis=1)
     donnees_filtrees = donnees[donnees["habitudes_heures"] <= 24].copy()
@@ -157,4 +157,4 @@ print(len(donnees))
 
 # Sauvegarde
 #donnees.to_csv('donnees_propres.csv', index=False)
-#print("Nettoyage terminé. Le nouveau fichier 'donnees_propres.csv' a été créé !")
+print("Nettoyage terminé. Le nouveau fichier 'donnees_propres.csv' a été créé !")
