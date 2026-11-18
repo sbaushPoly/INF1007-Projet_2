@@ -1,44 +1,44 @@
-Question : Quel est votre âge?
-Conditions: 
+Question 1: Quel est votre âge?
+Conditions: peut être converti en float, entre 17 et 25
 
-Question 1: Combien d'heures passez-vous à étudier chaque jour?
+Question 2: Combien d'heures passez-vous à étudier chaque jour?
 Conditions: peut être converti en float (utiliser try/except), entre 0 et 24
 
-Question 2: Combien d'heures passez-vous par jour sur votre téléphone cellulaire?
+Question 3: Combien d'heures passez-vous par jour sur votre téléphone cellulaire?
 Conditions: peut être converti en float, entre 0 et 24
 
-Question 3: Combien d'heures passez-vous par jour sur les médias sociaux?
+Question 4: Combien d'heures passez-vous par jour sur les médias sociaux?
 Conditions: peut être converti en float, entre 0 et 24
 
-Question 4: Combien d'heures passez-vous par jour à jouer à des jeux vidéo?
+Question 5: Combien d'heures passez-vous par jour à jouer à des jeux vidéo?
 Conditions: peut être converti en float, entre 0 et 24
 
-Question 5: Combien d'heures passez-vous par jour à utiliser des services de diffusion en continu?
+Question 6: Combien d'heures passez-vous par jour à utiliser des services de diffusion en continu?
 Conditions: peut être converti en float, entre 0 et 24
 
-Question 6: Pendant combien d'heures dormez-vous chaque nuit?
+Question 7: Pendant combien d'heures dormez-vous chaque nuit?
 Conditions: peut être converti en float, entre 0 et 24
 
-Question 7: Combien d'heures par jour consacrez-vous aux activités physiques?
+Question 8: Combien d'heures par jour consacrez-vous aux activités physiques?
 Conditions: peut être converti en float, entre 0 et 24
 
-Question 8: En pourcentage, quelle est la proportion des cours auquels vous vous êtes présentés?
+Question 9: En pourcentage, quelle est la proportion des cours auquels vous vous êtes présentés?
 Conditions: peut être converti en float, entre 0 et 100
 
-Question 9: En pourcentage, quelle est la proportion des travaux scolaires que vous avez complétés?
+Question 10: En pourcentage, quelle est la proportion des travaux scolaires que vous avez complétés?
 Conditions: peut être converti en float, entre 0 et 100
 
-Question 10: Combien de tasses de café consommez-vous par jour?
+Question 11: Combien de tasses de café consommez-vous par jour?
 Conditions: peut être converti en int, 0 et plus
 
-Question 11: Comment décririez-vous votre état de santé mentale?
+Question 12: Comment décririez-vous votre état de santé mentale?
 Conditions: choix de réponses: Faible, Moyen, Bon
 
-Question 12: Quel est le niveau d'éducation de vos parents?
+Question 13: Quel est le niveau d'éducation de vos parents?
 Conditions: choix de réponses: Secondaire, Baccalauréat, Maitrise, Doctorat
 
-Question 13: Comment décririez-vous la qualité de votre connexion Internet?
+Question 14: Comment décririez-vous la qualité de votre connexion Internet?
 Conditions: choix de réponses: Faible, Moyenne, Bonne
 
-Question 14: Sur 10, quel est votre niveau de motivation face à vos études?
+Question 15: Sur 10, quel est votre niveau de motivation face à vos études?
 Conditions: choix de réponses: peut être converti en float, entre 0 et 10
