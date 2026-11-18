@@ -6,7 +6,7 @@ import json
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.svm import SVR
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 
 class Modele:
     """
@@ -122,8 +122,7 @@ class TestModele:
         """
         Évalue les performances du modèle sur un ensemble de validation
 
-        Parameters
-        ----------
+        Args:
         model : LinearRegression
             Modèle de régression linéaire préalablement entraîné.
         X_val : np.ndarray
@@ -138,12 +137,14 @@ class TestModele:
 
             - ``rmse`` : erreur quadratique moyenne racine.
             - ``mse``  : erreur quadratique moyenne.
+            - ``r2``   : coefficient de détermination R².
         """
         y_pred = modele.predict(X_val)
         mse = mean_squared_error(y_pred, y_val)
         rmse = np.sqrt(mse)
+        r2 = r2_score(y_val, y_pred)
 
-        return {"rmse": rmse, "mse": mse}
+        return {"rmse": rmse, "mse": mse, "r2": r2}
 
 def main():
     
@@ -175,6 +176,7 @@ def main():
     results_1 = TestModele.evaluer(modele_1, x_val, y_val)
     print("RMSE baseline :", rmse_baseline)
     print(f"validation RMSE : {results_1['rmse']:.2f}")
+    print(f"validation R2 : {results_1['r2']:.2f}")
 
 
     print("Test modele 2 : Ridge")
@@ -182,6 +184,7 @@ def main():
     results_2 = TestModele.evaluer(modele_2, x_val, y_val)
     print("RMSE baseline :", rmse_baseline)
     print(f"validation RMSE : {results_2['rmse']:.2f}")
+    print(f"validation R2 : {results_1['r2']:.2f}")
 
 
     print("Test modele 3 : SVR")
@@ -189,6 +192,7 @@ def main():
     results_3 = TestModele.evaluer(modele_3, x_val, y_val)
     print("RMSE baseline :", rmse_baseline)
     print(f"validation RMSE : {results_3['rmse']:.2f}")
+    print(f"validation R2 : {results_1['r2']:.2f}")
     
 
     # Sauvegarder les métriques dans un fichier JSON
@@ -197,6 +201,7 @@ def main():
         "variable_cible": "final_exam_score",
         "modele": "LinearRegression",
         "rmse": results_1['rmse'],
+        "r2": results_1['r2'],
         "nb_observations": len(donnees),
         "fichier_modele": "modele1_entraîné.joblib"
     }
