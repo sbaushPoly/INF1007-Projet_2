@@ -1,6 +1,3 @@
 pytest
 matplotlib
-tkinter
-abc
-os
 pandas
