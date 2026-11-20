@@ -1,6 +1,55 @@
 import pandas as pd
 from modele import TestModele
 
+CAS_IDEAL = {
+    "heures_etude": {
+        "ideal": (5, 8), "echelle": 8,
+        "plus": "étudier davantage (visez environ {cible:g} h par jour)",
+        "moins": "étudier un peu moins (visez environ {cible:g} h par jour)",
+    },
+    "temps_telephone": {
+        "ideal": (0, 2), "echelle": 10,
+        "moins": "réduire votre temps sur le cellulaire (visez environ {cible:g} h par jour)",
+    },
+    "temps_reseaux_sociaux": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire votre temps sur les réseaux sociaux (visez environ {cible:g} h par jour)",
+    },
+    "temps_jeux": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire vos heures de jeux vidéo (visez environ {cible:g} h par jour)",
+    },
+    "temps_tele": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire votre temps devant la télé ou le streaming (visez environ {cible:g} h par jour)",
+    },
+    "sommeil": {
+        "ideal": (7, 9), "echelle": 5,
+        "plus": "dormir davantage (visez environ {cible:g} h par nuit)",
+        "moins": "dormir un peu moins (visez environ {cible:g} h par nuit)",
+    },
+    "temps_exercice": {
+        "ideal": (1, 2), "echelle": 2,
+        "plus": "faire plus d'exercice (visez environ {cible:g} h par jour)",
+    },
+    "taux_presence": {
+        "ideal": (95, 100), "echelle": 50,
+        "plus": "assister à plus de cours (visez environ {cible:g} % de présence)",
+    },
+    "taux_travail": {
+        "ideal": (95, 100), "echelle": 50,
+        "plus": "remettre plus de travaux (visez environ {cible:g} % des travaux)",
+    },
+    "caffeine": {
+        "ideal": (0, 2), "echelle": 6,
+        "moins": "réduire votre consommation de café (visez environ {cible:g} tasse(s) par jour)",
+    },
+    "motivation": {
+        "ideal": (8, 10), "echelle": 8,
+        "plus": "travailler votre motivation (visez un niveau d'environ {cible:g} sur 10)",
+    },}
+
+
 
 def prediction(model, reponse : dict) -> float:
     """
@@ -67,7 +116,7 @@ def prediction(model, reponse : dict) -> float:
 
 
 
-def amélioration(CAS_IDEAL, reponse: dict):
+def amélioration(model, CAS_IDEAL, reponse: dict):
     """
     Compare les réponses de l'utilisateur au cas idéal et suggère d'améliorer
     l'habitude dont l'écart (normalisé) est le plus grand.
@@ -104,7 +153,7 @@ def amélioration(CAS_IDEAL, reponse: dict):
     # Estimation (informative) de la note si cette seule habitude atteignait la cible
     rep_modifiee = dict(reponse)
     rep_modifiee[cle] = cible
-    note_ameliorer = prediction(rep_modifiee)
+    note_ameliorer = prediction(model, rep_modifiee)
         
 
     return {
@@ -121,55 +170,7 @@ def main():
 
     note_predite = prediction(model, reponse)
 
-    CAS_IDEAL = {
-    "heures_etude": {
-        "ideal": (5, 8), "echelle": 8,
-        "plus": "étudier davantage (visez environ {cible:g} h par jour)",
-        "moins": "étudier un peu moins (visez environ {cible:g} h par jour)",
-    },
-    "temps_telephone": {
-        "ideal": (0, 2), "echelle": 10,
-        "moins": "réduire votre temps sur le cellulaire (visez environ {cible:g} h par jour)",
-    },
-    "temps_reseaux_sociaux": {
-        "ideal": (0, 1), "echelle": 6,
-        "moins": "réduire votre temps sur les réseaux sociaux (visez environ {cible:g} h par jour)",
-    },
-    "temps_jeux": {
-        "ideal": (0, 1), "echelle": 6,
-        "moins": "réduire vos heures de jeux vidéo (visez environ {cible:g} h par jour)",
-    },
-    "temps_tele": {
-        "ideal": (0, 1), "echelle": 6,
-        "moins": "réduire votre temps devant la télé ou le streaming (visez environ {cible:g} h par jour)",
-    },
-    "sommeil": {
-        "ideal": (7, 9), "echelle": 5,
-        "plus": "dormir davantage (visez environ {cible:g} h par nuit)",
-        "moins": "dormir un peu moins (visez environ {cible:g} h par nuit)",
-    },
-    "temps_exercice": {
-        "ideal": (1, 2), "echelle": 2,
-        "plus": "faire plus d'exercice (visez environ {cible:g} h par jour)",
-    },
-    "taux_presence": {
-        "ideal": (95, 100), "echelle": 50,
-        "plus": "assister à plus de cours (visez environ {cible:g} % de présence)",
-    },
-    "taux_travail": {
-        "ideal": (95, 100), "echelle": 50,
-        "plus": "remettre plus de travaux (visez environ {cible:g} % des travaux)",
-    },
-    "caffeine": {
-        "ideal": (0, 2), "echelle": 6,
-        "moins": "réduire votre consommation de café (visez environ {cible:g} tasse(s) par jour)",
-    },
-    "motivation": {
-        "ideal": (8, 10), "echelle": 8,
-        "plus": "travailler votre motivation (visez un niveau d'environ {cible:g} sur 10)",
-    },}
-
-    amelioration = amélioration(CAS_IDEAL, reponse)
+    amelioration = amélioration(model, CAS_IDEAL, reponse)
 
     bilan = {
         "caracteristique": amelioration["cle"],

@@ -215,6 +215,7 @@ def main():
         json.dump(metadata, f, indent=4)
 
 
-main()
+if __name__ == "__main__":
+    main()
 
 
