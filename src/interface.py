@@ -5,9 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import os
 from donnees import charger_donnees
-
-reponses_habitudes = None
-reponse_note = None
+from main import main, conversion_langue
 
 def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation = True)->None:
     '''
@@ -81,7 +79,7 @@ def animation_y(frames, position_finales, deplacement=10)->None:
 
 def confirmation_reponse(reponse_recue:str, intervalle:list):
     '''
-    Vérifie si la réponse écrite reçue se trouve dans l'intervalle de réponses possibles.
+    Vérifie si la réponse écrite reçue est valide et se trouve dans l'intervalle de réponses possibles.
     Entrées:
         reponse_recue: La réponse qui a été écrite par l'utilisateur.
         intervalle: Une liste à deux éléments indiquant le début et la fin de l'intervalle inclusive de réponses possibles.
@@ -89,8 +87,12 @@ def confirmation_reponse(reponse_recue:str, intervalle:list):
     '''
     if reponse_recue == '':
         return 'Vous devez écrire une réponse.'
-    try: reponse_recue = float(reponse_recue)
-    except ValueError: return "La réponse doit être un nombre."
+    if ',' in reponse_recue:
+        return "Écrivez les nombres décimales avec un point plutôt qu'une virgule."
+    try: 
+        reponse_recue = float(reponse_recue)
+    except ValueError: 
+        return "La réponse doit être un nombre."
     if reponse_recue >= intervalle[0] and reponse_recue <= intervalle[1]:
         return None
     else:
@@ -145,9 +147,13 @@ class PageAPropos(Page): # -- Finir texte à propos --
         '''
         Initialise les éléments de la page à propos.
         '''
+        texte_a_propos = "Ceci est une application qui a été crée dans le cadre du projet 2 du cours INF1007. " \
+        "À partir d'un ensemble de données disponible en ligne, nous avons entrainé un modèle permettant de prédire la note qu'aurait un étudiant de l'âge de 17 à 25 ans selon ses habitudes et d'autres caractéristiques de sa vie." \
+        "\n\nCe modèle ayant été entrainé sur des données synthétiques, la prédiction donnée par cette application pourrait ne pas concorder avec les notes réelles obtenues." \
+        "\n\nDéveloppé par Saya Beauchemin et Ashley Buteau"
         super().__init__()
         ttk.Label(self.page, text='À propos', font=('Ink Free', 40), background='white').place(anchor = 'n', relx=0.5, rely = 0.1)
-        ttk.Label(self.page, text='test', font=('Ink Free', 20), background='white', wraplength=1500).place(anchor = 'n', relx=0.5, rely = 0.3)
+        ttk.Label(self.page, text=texte_a_propos, font=('Ink Free', 20), background='white', wraplength=1400, justify='center').place(anchor = 'n', relx=0.5, rely = 0.3)
         self.bouton_retour = tkinter.Button(self.page, text='Retour', font=('Ink Free', 30), bg = 'aquamarine1') 
         self.bouton_retour.place(anchor = 'n', relx=0.5, rely = 0.8)
 
@@ -155,7 +161,7 @@ class PageAPropos(Page): # -- Finir texte à propos --
         self.bouton_retour.configure(command=lambda: page_suivante(self.page, page_principale, 'y', -1))
 
 class PageQuestion(Page): # -- Organisation pour donner les réponses à main.py --
-    reponses_obtenues = [] #données pour test: [19.0, 4.0, 3.0, 2.0, 0.0, 0.0, 7.0, 0.47, 100.0, 95.0, 0.0, 'poor', 'highschool', 'good', 8.0]
+    reponses_obtenues = [] #données pour test: [19.0, 'female', 4.0, 3.0, 2.0, 0.0, 0.0, 7.0, 0.47, 100.0, 95.0, 0.0, 'poor', 'highschool', 'good', 8.0]
     def __init__(self, type: str, question: str, prochaine_page:ttk.Frame, options: list=None):
         '''
         Initialise la page de la question et des variables.
@@ -179,8 +185,6 @@ class PageQuestion(Page): # -- Organisation pour donner les réponses à main.py
             self.reponse = tkinter.StringVar()
             self.entree_reponse = ttk.Entry(self.page, textvariable=self.reponse, font=('Ink Free', 20)).place(anchor = 'n', relx=0.5, rely = 0.5, relwidth=0.2)
             self.message_erreur = tkinter.Label(self.page, text='', font=('Ink Free', 20), background='white', foreground='red')
-            if options == None:
-                options = [0, 24]
         elif type == 'choix':
             if options == None:
                 options = [] # la liste des choix possibles est vide
@@ -201,6 +205,7 @@ class PageQuestion(Page): # -- Organisation pour donner les réponses à main.py
 
     def configuration_bouton(self):
         if self.prochaine_page == page_resultats1:
+            print('Dernière question')
             self.bouton_suite.configure(command=lambda: self.derniere_page())
         else:
             self.bouton_suite.configure(command=lambda: self.recuperer_reponse())
@@ -214,30 +219,12 @@ class PageQuestion(Page): # -- Organisation pour donner les réponses à main.py
         if self.type_question == 'ecrit':
             if len(self.intervalle) == 2 and type(self.intervalle[0]) == int and type(self.intervalle[1]) == int:
                 raison_erreur = confirmation_reponse(reponse_recue, self.intervalle)
-                if reponse_recue == '':
-                    raison_erreur = 'Vous devez écrire une réponse'
-                else:
+                if raison_erreur == None:
                     reponse_recue = float(reponse_recue)
             else:
-                raise ValueError("L'intervalle de réponse est invalide")
+                raise ValueError('Intervalle invalide')
         else:
-            match reponse_recue: # --Déplacer ailleurs? --
-                case 'Faible':
-                    reponse_recue = 'poor' 
-                case 'Moyen' | 'Moyenne':
-                    reponse_recue = 'average'
-                case 'Bon' | 'Bonne':
-                    reponse_recue = 'good'
-                case 'Secondaire':
-                    reponse_recue = 'highschool'
-                case 'Baccalauréat':
-                    reponse_recue = 'bachelors'
-                case 'Maitrise':
-                    reponse_recue = 'masters'
-                case 'Doctorat':
-                    reponse_recue = 'phd'
-                case _:
-                    raise ValueError('Entrée de choix invalide')
+            reponse_recue = conversion_langue(reponse_recue, 'Français')
             raison_erreur = None 
         if raison_erreur == None:
             self.reponses_obtenues.append(reponse_recue)
@@ -250,12 +237,13 @@ class PageQuestion(Page): # -- Organisation pour donner les réponses à main.py
     def derniere_page(self):
         '''
         Lorsque la dernière question a été répondue, ajoute la dernière réponse à la liste des réponses
-        et transfert la liste des réponses à une variable globale utilisable par d'autres modules.
+        et acquiert les résultats selon les réponses reçues.
         '''
+        print('Dernière page')
         self.recuperer_reponse()
+        page_resultats1_classe.bilan = main()
         page_resultats1_classe.initialisation_indicateurs()
-        global reponses_habitudes
-        reponses_habitudes = self.retourner_reponses()
+        page_resultats1_classe.affichage_resultat.configure(text=str(round(page_resultats1_classe.bilan['note_actuelle'], 2))+'%')
 
     @classmethod
     def retourner_reponses(cls):
@@ -263,25 +251,28 @@ class PageQuestion(Page): # -- Organisation pour donner les réponses à main.py
         Retourne la liste des réponses obtenues.
         Entrée:
             cls : la classe PageQuestion
+        Sortie:
+            cls.reponses_obtenues (list): La liste des réponses de l'utilisateur dans l'ordre des questions
         '''
         return cls.reponses_obtenues
 
 association_questions = {
-    1:{'sujet':"Âge", 'colonne': 'age', 'position_y': 150, 'couleur':'light pink', 'unite':'ans'},
-    2:{'sujet':"Heures d'étude", 'colonne': 'study_hours_per_day', 'position_y': 190, 'couleur':'light blue', 'unite':'h'},
-    3:{'sujet':"Heures sur téléphone cellulaire", 'colonne': 'smartphone_usage_hours', 'position_y': 230, 'couleur':'khaki1', 'unite':'h'},
-    4:{'sujet':"Heures sur réseaux sociaux", 'colonne': 'social_media_hours', 'position_y': 270, 'couleur':'aquamarine1', 'unite':'h'},
-    5:{'sujet':"Heures sur les jeux vidéos", 'colonne': 'gaming_hours', 'position_y': 310, 'couleur':'light pink', 'unite':'h'},
-    6:{'sujet':"Heures sur services de diffusion", 'colonne': 'streaming_hours', 'position_y': 350, 'couleur':'light blue', 'unite':'h'},
-    7:{'sujet':"Heures de sommeil", 'colonne': 'sleep_hours', 'position_y': 390, 'couleur':'khaki1', 'unite':'h'},
-    8:{'sujet':"Heures d'activité physique", 'colonne': 'exercise_hours', 'position_y': 430, 'couleur':'aquamarine1', 'unite':'h'},
-    9:{'sujet':"Pourcentage de cours présents", 'colonne': 'class_attendance_percent', 'position_y': 470, 'couleur':'light pink', 'unite':'%'},
-    10:{'sujet':"Pourcentage de travaux complétés", 'colonne': 'assignment_completion_percent', 'position_y': 510, 'couleur':'light blue', 'unite':'%'},
-    11:{'sujet':"Tasses de café consommés", 'colonne': 'caffeine_intake_cups', 'position_y': 550, 'couleur':'khaki1', 'unite':'tasse(s)'},
-    12:{'sujet':"État de santé mentale", 'colonne': 'mental_health_status', 'position_y': 590, 'couleur':'aquamarine1', 'unite':''},
-    13:{'sujet':"Niveau d'éducation des parents", 'colonne': 'parent_education_level', 'position_y': 630, 'couleur':'light blue', 'unite':''},
-    14:{'sujet':"Qualité de la connexion Internet", 'colonne': 'internet_quality', 'position_y': 670, 'couleur':'khaki1', 'unite':''},
-    15:{'sujet':"Niveau de motivation", 'colonne': 'motivation_level', 'position_y': 710, 'couleur':'aquamarine1', 'unite':'/10'},
+    1:{'sujet':"Âge", 'colonne': 'age', 'position_y': 110, 'couleur':'aquamarine1', 'unite':'ans'},
+    2:{'sujet':"Genre", 'colonne': 'gender', 'position_y': 150, 'couleur':'light pink', 'unite':''},
+    3:{'sujet':"Heures d'étude", 'colonne': 'study_hours_per_day', 'position_y': 190, 'couleur':'light blue', 'unite':'h'},
+    4:{'sujet':"Heures sur téléphone cellulaire", 'colonne': 'smartphone_usage_hours', 'position_y': 230, 'couleur':'khaki1', 'unite':'h'},
+    5:{'sujet':"Heures sur réseaux sociaux", 'colonne': 'social_media_hours', 'position_y': 270, 'couleur':'aquamarine1', 'unite':'h'},
+    6:{'sujet':"Heures sur les jeux vidéos", 'colonne': 'gaming_hours', 'position_y': 310, 'couleur':'light pink', 'unite':'h'},
+    7:{'sujet':"Heures sur services de diffusion", 'colonne': 'streaming_hours', 'position_y': 350, 'couleur':'light blue', 'unite':'h'},
+    8:{'sujet':"Heures de sommeil", 'colonne': 'sleep_hours', 'position_y': 390, 'couleur':'khaki1', 'unite':'h'},
+    9:{'sujet':"Heures d'activité physique", 'colonne': 'exercise_hours', 'position_y': 430, 'couleur':'aquamarine1', 'unite':'h'},
+    10:{'sujet':"Pourcentage de cours présents", 'colonne': 'class_attendance_percent', 'position_y': 470, 'couleur':'light pink', 'unite':'%'},
+    11:{'sujet':"Pourcentage de travaux complétés", 'colonne': 'assignment_completion_percent', 'position_y': 510, 'couleur':'light blue', 'unite':'%'},
+    12:{'sujet':"Tasses de café consommés", 'colonne': 'caffeine_intake_cups', 'position_y': 550, 'couleur':'khaki1', 'unite':'tasse(s)'},
+    13:{'sujet':"État de santé mentale", 'colonne': 'mental_health_status', 'position_y': 590, 'couleur':'aquamarine1', 'unite':''},
+    14:{'sujet':"Niveau d'éducation des parents", 'colonne': 'parent_education_level', 'position_y': 630, 'couleur':'light pink', 'unite':''},
+    15:{'sujet':"Qualité de la connexion Internet", 'colonne': 'internet_quality', 'position_y': 670, 'couleur':'light blue', 'unite':''},
+    16:{'sujet':"Niveau de motivation", 'colonne': 'motivation_level', 'position_y': 710, 'couleur':'khaki1', 'unite':'/10'}
 }
 
 class IndicateurPlacement:
@@ -349,21 +340,7 @@ class IndicateurPlacement:
         else:
             self.entree_utilisateur.configure(text = 'Vous:'+ PageQuestion.reponses_obtenues[self.index_question-1])
             reponse_frequente = str(self.df.value_counts(self.colonne).idxmax())
-            match reponse_frequente:
-                case 'Good':
-                    reponse_frequente = 'Bon'
-                case 'Average':
-                    reponse_frequente = 'Moyen'
-                case 'Poor':
-                    reponse_frequente = 'Faible'
-                case 'HighSchool':
-                    reponse_frequente = 'Secondaire'
-                case 'Bachelors':
-                    reponse_frequente = 'Baccalauréat'
-                case 'Masters':
-                    reponse_frequente = 'Maitrise'
-                case 'PhD':
-                    reponse_frequente = 'Doctorat'
+            reponse_frequente = conversion_langue(reponse_frequente.lower(), 'Anglais')
             self.entree_moyenne.configure(text = 'Valeur plus fréquente:'+ reponse_frequente)
 
     def animation_bloc(self):
@@ -377,34 +354,27 @@ class IndicateurPlacement:
             animation_x([self.bloc, self.bouton], [1600, 1600], 10)
             self.mouvement_vers_ext = False
 
-class PageResultat1(Page): # -- Afficher résultat et retourner note voulue
+class PageResultat1(Page): # -- Afficher résultat
     def __init__(self):
         '''
         Initialise les éléments de la page 1 des résultats et les variables associées.
         '''
         self.liste_indicateurs = []
+        self.bilan = None
         #Initialisation de l'indication du résultat
         super().__init__()
-        # self.page.place(width=1600, height=900)
         ttk.Label(self.page, text='Résultats:', font=('Ink Free', 60), background='white').place(anchor = 'nw', relx=0.1, rely = 0.1)
         ttk.Label(self.page, text='Selon vos habitudes, il est probable que vous obteniez une note de', font=('Ink Free', 40), background='white', wraplength=700, justify='center').place(anchor = 'nw', relx=0.1, rely = 0.3)
-        self.affichage_resultat = ttk.Label(self.page, text='N/A', font=('Ink Free', 60), background='white').place(anchor = 'nw', relx=0.25, rely = 0.6)
-        #Initialisation de l'entrée de la note voulue et les éléments associés
-        ttk.Label(self.page, text="Quelle note avez-vous comme objectif d'atteindre?", font=('Ink Free', 25), background='pink').place(anchor = 'nw', relx=0.03, rely = 0.87)
-        self.reponse = tkinter.StringVar()
-        self.entree_reponse = ttk.Entry(self.page, textvariable=self.reponse, font=('Ink Free', 25)).place(anchor = 'nw', relx=0.48, rely = 0.87, relwidth=0.2)
-        self.message_erreur = tkinter.Label(self.page, text='', font=('Ink Free', 20), background='white', foreground='red')
-        self.bouton_suite = tkinter.Button(self.page, image=image_fleche, bg = 'gray80')
-        self.bouton_suite.place(anchor = 'nw', height = 46, width=46, relx=0.68, rely = 0.87)
-        #Initialisation du bouton de retour au menu principal
-        self.bouton_retour = tkinter.Button(self.page, text='Retour au menu principal', font=('Ink Free', 18), bg = 'aquamarine1')
-        self.bouton_retour.place(anchor = 'nw', relx=0.75, rely = 0.87)
-        ttk.Label(self.page, text="Comparez vos habitudes avec la moyenne!", font=('Ink Free', 25), background='white').place(anchor = 'nw', relx=0.55, rely = 0.1)
-        #Initialisation des indicateurs de placement
+        self.affichage_resultat = ttk.Label(self.page, text='N/A', font=('Ink Free', 60), background='white')
+        self.affichage_resultat.place(anchor = 'nw', relx=0.2, rely = 0.6)
+        ttk.Label(self.page, text="Comparez vos habitudes avec la moyenne!", font=('Ink Free', 25), background='white').place(anchor = 'nw', relx=0.55, rely = 0.05)
+        #Initialisation du bouton de la suite
+        self.bouton_suite = tkinter.Button(self.page, text='Suivant', bg = 'light pink', font=('Ink Free', 30), justify='left')
+        self.bouton_suite.place(anchor = 'nw', relx=0.15, rely = 0.87, width = 400)
     
     def initialisation_indicateurs(self):
         '''
-        Initialise les indicateurs de placement lorsque les réponses seront reçues.
+        Initialise les indicateurs de placement et le résultat lorsque les réponses seront reçues.
         '''
         for i in range(1, len(association_questions)+1):
             if i < 8:
@@ -416,80 +386,38 @@ class PageResultat1(Page): # -- Afficher résultat et retourner note voulue
             indicateur.mise_a_jour_texte()    
 
     def configuration_bouton(self):
-        self.bouton_retour.configure(command=lambda: self.retour_page_principale())
-        self.bouton_suite.configure(command = lambda: self.recuperer_reponse())
+        self.bouton_suite.configure(command = lambda: self.vers_resultat2())
 
-    def recuperer_reponse(self):
-        '''
-        Sauvegarde la réponse et fait la transition vers la prochaine page si la réponse est valide.
-        Si la réponse est invalide, affiche un message d'erreur sur l'interface.
-        '''
-        reponse_recue = self.reponse.get()
-        raison_erreur = confirmation_reponse(reponse_recue, [0,100])
-        if raison_erreur == None:
-            page_suivante(self.page, page_resultats2, 'y', -1)
-            self.reponse = reponse_recue
-            global reponse_note
-            reponse_note = self.reponse
-            page_resultats2_classe.configuration_texte()
-        else:
-            self.message_erreur.configure(text = raison_erreur)
-            self.message_erreur.place(anchor = 'nw', relx=0.48, rely = 0.82)
-
-    def retourner_reponse(self):
-        '''
-        Retourne la note voulue écrite par l'utilisateur.
-        '''
-        return self.reponse
+    def vers_resultat2(self):
+        #print('Bilan :', page_resultats1_classe.bilan)
+        page_suivante(self.page, page_resultats2, 'x', 1)
+        page_resultats2_classe.mise_a_jour_texte()
         
-    def retour_page_principale(self):
-        '''
-        Fait la transition vers la page principale et efface les réponses écrites
-        '''
-        page_suivante(self.page, page_principale, 'y', 1)
-        PageQuestion.reponses_obtenues = []
-
-class proposition: # -- Mise à jour à configurer --
-    def __init__(self, page, numero:int):
-        '''
-        Initialise les éléments des blocs de changements proposés et leur position selon leur nombre.
-        '''
-        self.texte_proposition = ttk.Label(page, text='Augmenter votre temps de sommeil de 1h', font=('Ink Free', 30), background='light coral', wraplength=400)
-        self.texte_statistiques = ttk.Label(page, text='Les étudiants obtenant une note autour de 90,00% passent en moyenne 7h à dormir', font=('Ink Free', 20), background='white', wraplength=400)
-        if numero == 1:
-            self.texte_proposition.place(relx=0.1, rely = 0.4)
-            self.texte_statistiques.place(relx=0.1, rely = 0.55)
-        elif numero == 2:
-            self.texte_proposition.place(relx=0.35, rely = 0.4)
-            self.texte_statistiques.place(relx=0.35, rely = 0.55)
-        else:
-            self.texte_proposition.place(relx=0.7, rely = 0.4)
-            self.texte_statistiques.place(relx=0.7, rely = 0.55)
-
-    def mise_a_jour_texte(self):
-        pass
-
 class PageResultat2(Page):
     def __init__(self):
         super().__init__()
-        self.texte = ttk.Label(self.page, text='', font=('Ink Free', 40), background='white')
+        self.texte = ttk.Label(self.page, text = '', font=('Ink Free', 40), background='white', wraplength=1400)
         self.texte.place(anchor = 'n', relx=0.5, rely = 0.1)
         self.bouton_retour = tkinter.Button(self.page, text='Retour au menu principal', font=('Ink Free', 18), bg = 'aquamarine1')
         self.bouton_retour.place(anchor = 'n', relx=0.5, rely = 0.8)
-        proposition(self.page, 1)
 
-        #self.page.place(width=1600, height=900)
+        #Proposition
+        self.texte_caracteristique = ttk.Label(self.page, text='Caracteristique', font=('Ink Free', 40), background='light coral', wraplength=600)
+        self.texte_changement = ttk.Label(self.page, text='Changement', font=('Ink Free', 30), background='light pink', wraplength=600)
+        self.texte_caracteristique.place(anchor='n', relx=0.5, rely = 0.4)
+        self.texte_changement.place(anchor='n', relx=0.5, rely = 0.55)
+
+    def mise_a_jour_texte(self):
+        self.texte.configure(text=f'Pour obtenir une note de {round(page_resultats1_classe.bilan['note_apres'], 2)}% (hausse de {round(page_resultats1_classe.bilan['gain'], 2)}%), une habitude que vous pourriez changer serait:')
+        self.texte_caracteristique.configure(text=page_resultats1_classe.bilan['caracteristique_affiche'])
+        self.texte_changement.configure(text=page_resultats1_classe.bilan['message_affiche'])
 
     def configuration_bouton(self):
         self.bouton_retour.configure(command=lambda: self.retour_page_principale())
 
-    def configuration_texte(self):
-        self.texte.configure(text = f'Pour atteindre une note de {page_resultats1_classe.retourner_reponse()}%, vous pourriez...')
-
     def retour_page_principale(self):
         page_suivante(self.page, page_principale, 'y', 1)
         PageQuestion.reponses_obtenues = []
-        PageResultat1.reponse = tkinter.StringVar()
 
 #Initialisation de l'interface utilisateur
 root = tkinter.Tk()
@@ -507,33 +435,35 @@ page_resultats1 = page_resultats1_classe.frame_page()
 page_resultats2_classe = PageResultat2()
 page_resultats2 = page_resultats2_classe.frame_page()
 #Initialisation pages question
-page_q15_classe = PageQuestion('ecrit', "15. Sur 10, quel est votre niveau de motivation face à vos études?", page_resultats1, [0, 10])
+page_q16_classe = PageQuestion('ecrit', "16. Sur 10, quel est votre niveau de motivation face à vos études?", page_resultats1, [0, 10])
+page_q16 = page_q16_classe.frame_page()
+page_q15_classe = PageQuestion('choix', "15. Comment décririez-vous la qualité de votre connexion Internet?", page_q16, ['Faible', 'Moyenne', 'Bonne'])
 page_q15 = page_q15_classe.frame_page()
-page_q14_classe = PageQuestion('choix', "14. Comment décririez-vous la qualité de votre connexion Internet?", page_q15, ['Faible', 'Moyenne', 'Bonne'])
+page_q14_classe = PageQuestion('choix', "14. Quel est le niveau d'éducation de vos parents?", page_q15, ['Secondaire', 'Baccalauréat', 'Maitrise', 'Doctorat'])
 page_q14 = page_q14_classe.frame_page()
-page_q13_classe = PageQuestion('choix', "13. Quel est le niveau d'éducation de vos parents?", page_q14, ['Secondaire', 'Baccalauréat', 'Maitrise', 'Doctorat'])
+page_q13_classe = PageQuestion('choix', "13. Comment décririez-vous votre état de santé mentale?", page_q14, ['Faible', 'Moyen', 'Bon'])
 page_q13 = page_q13_classe.frame_page()
-page_q12_classe = PageQuestion('choix', "12. Comment décririez-vous votre état de santé mentale?", page_q13, ['Faible', 'Moyen', 'Bon'])
+page_q12_classe = PageQuestion('ecrit', "12. Combien de tasses de café consommez-vous par jour?", page_q13, [0, 10])
 page_q12 = page_q12_classe.frame_page()
-page_q11_classe = PageQuestion('ecrit', "11. Combien de tasses de café consommez-vous par jour?", page_q12, [0, 10])
+page_q11_classe = PageQuestion('ecrit', "11. En pourcentage, quelle est la proportion des travaux scolaires que vous avez complétés?", page_q12, [0, 100])
 page_q11 = page_q11_classe.frame_page()
-page_q10_classe = PageQuestion('ecrit', "10. En pourcentage, quelle est la proportion des travaux scolaires que vous avez complétés?", page_q11, [0, 100])
+page_q10_classe = PageQuestion('ecrit', "10. En pourcentage, quelle est la proportion des cours auquels vous vous êtes présentés?", page_q11, [0, 100])
 page_q10 = page_q10_classe.frame_page()
-page_q9_classe = PageQuestion('ecrit', "9. En pourcentage, quelle est la proportion des cours auquels vous vous êtes présentés?", page_q10, [0, 100])
+page_q9_classe = PageQuestion('ecrit', "9. Combien d'heures par jour consacrez-vous aux activités physiques?", page_q10, [0, 24])
 page_q9 = page_q9_classe.frame_page()
-page_q8_classe = PageQuestion('ecrit', "8. Combien d'heures par jour consacrez-vous aux activités physiques?", page_q9, [0, 24])
+page_q8_classe = PageQuestion('ecrit', "8. Pendant combien d'heures dormez-vous chaque nuit?", page_q9, [0, 24])
 page_q8 = page_q8_classe.frame_page()
-page_q7_classe = PageQuestion('ecrit', "7. Pendant combien d'heures dormez-vous chaque nuit?", page_q8, [0, 24])
+page_q7_classe = PageQuestion('ecrit', "7. Combien d'heures passez-vous par jour à utiliser des services de diffusion en continu?", page_q8, [0, 24])
 page_q7 = page_q7_classe.frame_page()
-page_q6_classe = PageQuestion('ecrit', "6. Combien d'heures passez-vous par jour à utiliser des services de diffusion en continu?", page_q7, [0, 24])
+page_q6_classe = PageQuestion('ecrit', "6. Combien d'heures passez-vous par jour à jouer à des jeux vidéo?", page_q7, [0, 24])
 page_q6 = page_q6_classe.frame_page()
-page_q5_classe = PageQuestion('ecrit', "5. Combien d'heures passez-vous par jour à jouer à des jeux vidéo?", page_q6, [0, 24])
+page_q5_classe = PageQuestion('ecrit', "5. Combien d'heures passez-vous par jour sur les médias sociaux?", page_q6, [0, 24])
 page_q5 = page_q5_classe.frame_page()
-page_q4_classe = PageQuestion('ecrit', "4. Combien d'heures passez-vous par jour sur les médias sociaux?", page_q5, [0, 24])
+page_q4_classe = PageQuestion('ecrit', "4. Combien d'heures passez-vous par jour sur votre téléphone cellulaire?", page_q5, [0, 24])
 page_q4 = page_q4_classe.frame_page()
-page_q3_classe = PageQuestion('ecrit', "3. Combien d'heures passez-vous par jour sur votre téléphone cellulaire?", page_q4, [0, 24])
+page_q3_classe = PageQuestion('ecrit', "3. Combien d'heures passez-vous à étudier chaque jour?", page_q4, [0, 24])
 page_q3 = page_q3_classe.frame_page()
-page_q2_classe = PageQuestion('ecrit', "2. Combien d'heures passez-vous à étudier chaque jour?", page_q3, [0, 24])
+page_q2_classe = PageQuestion('choix', "2. Quel est votre genre?", page_q3, ['Homme', 'Femme'])
 page_q2 = page_q2_classe.frame_page()
 page_q1_classe = PageQuestion('ecrit', "1. Quel est votre âge?", page_q2, [17, 25])
 page_q1 = page_q1_classe.frame_page()
@@ -556,6 +486,7 @@ page_q12_classe.configuration_bouton()
 page_q13_classe.configuration_bouton()
 page_q14_classe.configuration_bouton()
 page_q15_classe.configuration_bouton()
+page_q16_classe.configuration_bouton()
 page_resultats1_classe.configuration_bouton()
 page_resultats2_classe.configuration_bouton()
 
