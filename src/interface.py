@@ -142,7 +142,7 @@ class PagePrincipale(Page):
             #code par IA modifié
         self.bouton3.configure(command= lambda: root.quit())
 
-class PageAPropos(Page): # -- Finir texte à propos --
+class PageAPropos(Page): 
     def __init__(self):
         '''
         Initialise les éléments de la page à propos.
@@ -160,7 +160,7 @@ class PageAPropos(Page): # -- Finir texte à propos --
     def configuration_bouton(self):
         self.bouton_retour.configure(command=lambda: page_suivante(self.page, page_principale, 'y', -1))
 
-class PageQuestion(Page): # -- Organisation pour donner les réponses à main.py --
+class PageQuestion(Page): 
     reponses_obtenues = [] #données pour test: [19.0, 'female', 4.0, 3.0, 2.0, 0.0, 0.0, 7.0, 0.47, 100.0, 95.0, 0.0, 'poor', 'highschool', 'good', 8.0]
     def __init__(self, type: str, question: str, prochaine_page:ttk.Frame, options: list=None):
         '''
