@@ -147,6 +147,11 @@ class TestModele:
         return {"rmse": rmse, "mse": mse, "r2": r2}
 
 def main():
+    """
+    Fonction principale du programme.
+    Organise l'éxécution du programme en appelant les fonctions de chargement des données, 
+    d'entrainement et d'évaluation du modèle.
+    """
     
     # Entrainement des modèles
     dossier_actuel = os.path.dirname(os.path.abspath(__file__))

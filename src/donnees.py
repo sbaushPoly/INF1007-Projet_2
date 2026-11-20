@@ -145,9 +145,7 @@ afficher_graphiques(donnees, 'sleep_hours', "Distribution du temps de sommeil", 
 afficher_graphiques(donnees, 'exercise_hours', "Distribution du temps d'acivité physique", 'boxplot')
 
 # Conclusion :
-# Aucune valeur aberrante significative observée
-# donc aucune suppression effectuée.
-
+# Aucune valeur aberrante significative observée, donc aucune suppression effectuée.
 # ----------------------------
 # Nettoyage
 # ----------------------------

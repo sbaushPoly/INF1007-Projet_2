@@ -1,14 +1,12 @@
-import sys
 import pytest
-sys.path.insert(0, 'src')
-import donnees
-from main import prediction, amelioration
+import src.donnees
+from src.main import prediction, amelioration
 
 class DonneeInvalideError(Exception):
     """Levée quand une réponse de l'utilisateur est manquante, invalide ou hors des limites."""
 
 def test_implementation_test_initial():
-    assert donnees.implementation_test_initial() == True
+    assert src.donnees.implementation_test_initial() == True
 
 # ---------- Cas usuels ----------
 def test_prediction_rep_choix(reponses):
