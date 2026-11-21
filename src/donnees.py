@@ -122,37 +122,40 @@ def nettoyer_donnees(donnees: pd.DataFrame) -> pd.DataFrame:
     donnees = controle_habitudes_quotidiennes(donnees)
     return donnees
 
+if __name__ == '__main__':
 #----------------------------
 # Chargement des données
 #----------------------------
-dossier_actuel = os.path.dirname(os.path.abspath(__file__))
-chemin = os.path.join(dossier_actuel, "archive", "student_digital_life.csv")
-donnees = charger_donnees(chemin)
+    dossier_actuel = os.path.dirname(os.path.abspath(__file__))
+    chemin = os.path.join(dossier_actuel, "archive", "student_digital_life.csv")
+    donnees = charger_donnees(chemin)
 
 #----------------------------
 # Exploration des données
 #----------------------------
-print(donnees.dtypes)
-print(donnees.describe()) 
-afficher_graphiques(donnees, "age", "Distribution de l'âge des étudiants", 'boxplot')
-afficher_graphiques(donnees, "caffeine_intake_cups", "Distribution de la consommation de caféine", 'boxplot')
-afficher_graphiques(donnees, 'study_hours_per_day', "Distribution du temps d'étude en heures", 'boxplot')
-afficher_graphiques(donnees, 'smartphone_usage_hours', "Distribution du temps d'utilisation du cellulaire", 'boxplot')
-afficher_graphiques(donnees, 'social_media_hours', "Distribution du temps d'utilisation de résaux sociaux", 'boxplot')
-afficher_graphiques(donnees, 'gaming_hours', "Distribution du temps consacré aux jeux vidéo", 'boxplot')
-afficher_graphiques(donnees, 'streaming_hours', "Distribution du temps consacré aux services de diffusion continu", 'boxplot')
-afficher_graphiques(donnees, 'sleep_hours', "Distribution du temps de sommeil", 'boxplot')
-afficher_graphiques(donnees, 'exercise_hours', "Distribution du temps d'acivité physique", 'boxplot')
+    print(donnees.dtypes)
+    print(donnees.describe()) 
+    afficher_graphiques(donnees, "age", "Distribution de l'âge des étudiants", 'boxplot')
+    afficher_graphiques(donnees, "caffeine_intake_cups", "Distribution de la consommation de caféine", 'boxplot')
+    afficher_graphiques(donnees, 'study_hours_per_day', "Distribution du temps d'étude en heures", 'boxplot')
+    afficher_graphiques(donnees, 'smartphone_usage_hours', "Distribution du temps d'utilisation du cellulaire", 'boxplot')
+    afficher_graphiques(donnees, 'social_media_hours', "Distribution du temps d'utilisation de résaux sociaux", 'boxplot')
+    afficher_graphiques(donnees, 'gaming_hours', "Distribution du temps consacré aux jeux vidéo", 'boxplot')
+    afficher_graphiques(donnees, 'streaming_hours', "Distribution du temps consacré aux services de diffusion continu", 'boxplot')
+    afficher_graphiques(donnees, 'sleep_hours', "Distribution du temps de sommeil", 'boxplot')
+    afficher_graphiques(donnees, 'exercise_hours', "Distribution du temps d'acivité physique", 'boxplot')
 
 # Conclusion :
-# Aucune valeur aberrante significative observée, donc aucune suppression effectuée.
+# Aucune valeur aberrante significative observée
+# donc aucune suppression effectuée.
+
 # ----------------------------
 # Nettoyage
 # ----------------------------
-donnees = nettoyer_donnees(donnees)
-print("Nombre de données après nettoyage :")
-print(len(donnees))
+    donnees = nettoyer_donnees(donnees)
+    print("Nombre de données après nettoyage :")
+    print(len(donnees))
 
 # Sauvegarde
 #donnees.to_csv('donnees_propres.csv', index=False)
-print("Nettoyage terminé. Le nouveau fichier 'donnees_propres.csv' a été créé !")
+    print("Nettoyage terminé. Le nouveau fichier 'donnees_propres.csv' a été créé !")

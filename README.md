@@ -13,6 +13,7 @@ par NeuroCipher sur Kaggle
 
 ## Documentation consultée
 Documentation tkinter : [https://docs.python.org/3/library/tkinter.html#](https://docs.python.org/3/library/tkinter.html#)
+Documentation matplotlib :[https://matplotlib.org/stable/index.html](https://matplotlib.org/stable/index.html)
 
 ## Sources des images
 Arrière plan: College Ruled Paper par BlazingFireBug sur DeviantArt : [https://www.deviantart.com/blazingfirebug/art/College-Ruled-Paper-438389060](https://www.deviantart.com/blazingfirebug/art/College-Ruled-Paper-438389060)
