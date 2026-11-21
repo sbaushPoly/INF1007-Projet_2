@@ -7,6 +7,9 @@ import os
 from donnees import charger_donnees
 from main import main, conversion_langue, confirmation_reponse
 
+if os.environ.get('DISPLAY','') == '':
+    os.environ.__setitem__('DISPLAY', ':0.0')
+
 def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation = True)->None:
     '''
     Cache les éléments de la page actuellement visible et fait apparaitre les éléments de la prochaine page.
