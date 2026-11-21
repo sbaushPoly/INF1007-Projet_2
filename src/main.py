@@ -2,6 +2,27 @@ import pandas as pd
 from modele import TestModele
 import interface
 
+def confirmation_reponse(reponse_recue:str, intervalle:list):
+    '''
+    Vérifie si la réponse écrite reçue est valide et se trouve dans l'intervalle de réponses possibles.
+    Entrées:
+        reponse_recue: La réponse qui a été écrite par l'utilisateur.
+        intervalle: Une liste à deux éléments indiquant le début et la fin de l'intervalle inclusive de réponses possibles.
+    Retourne un string avec le message d'erreur correspondant ou None s'il n'y a pas d'erreur dans la réponse recue.
+    '''
+    if reponse_recue == '':
+        return 'Vous devez écrire une réponse.'
+    if ',' in reponse_recue:
+        return "Écrivez les nombres décimales avec un point plutôt qu'une virgule."
+    try: 
+        reponse_recue = float(reponse_recue)
+    except ValueError: 
+        return "La réponse doit être un nombre."
+    if reponse_recue >= intervalle[0] and reponse_recue <= intervalle[1]:
+        return None
+    else:
+        return "La réponse ne se trouve pas dans l'intervalle permise."
+
 def conversion_langue(mot, langue_initiale):
     '''
     Convertit les mots vers leur valeur indiquée en anglais tel que dans le fichier csv, ou l'inverse.
@@ -306,6 +327,6 @@ def main():
             'message_affiche': message
             }
 
-    print(bilan)
+    #print(bilan)
     return bilan
 #main()

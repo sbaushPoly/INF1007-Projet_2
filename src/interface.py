@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import os
 from donnees import charger_donnees
-from main import main, conversion_langue
+from main import main, conversion_langue, confirmation_reponse
 
 def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation = True)->None:
     '''
@@ -76,28 +76,6 @@ def animation_y(frames, position_finales, deplacement=10)->None:
         frames[0].after(6, lambda:animation_y(frames, position_finales, deplacement))
     else:
         root.update_idletasks()
-
-def confirmation_reponse(reponse_recue:str, intervalle:list):
-    '''
-    Vérifie si la réponse écrite reçue est valide et se trouve dans l'intervalle de réponses possibles.
-    Entrées:
-        reponse_recue: La réponse qui a été écrite par l'utilisateur.
-        intervalle: Une liste à deux éléments indiquant le début et la fin de l'intervalle inclusive de réponses possibles.
-    Retourne un string avec le message d'erreur correspondant ou None s'il n'y a pas d'erreur dans la réponse recue.
-    '''
-    if reponse_recue == '':
-        return 'Vous devez écrire une réponse.'
-    if ',' in reponse_recue:
-        return "Écrivez les nombres décimales avec un point plutôt qu'une virgule."
-    try: 
-        reponse_recue = float(reponse_recue)
-    except ValueError: 
-        return "La réponse doit être un nombre."
-    if reponse_recue >= intervalle[0] and reponse_recue <= intervalle[1]:
-        return None
-    else:
-        return "La réponse ne se trouve pas dans l'intervalle permise."
-
 
 class Page(ABC):
     def __init__(self):
@@ -205,7 +183,6 @@ class PageQuestion(Page):
 
     def configuration_bouton(self):
         if self.prochaine_page == page_resultats1:
-            print('Dernière question')
             self.bouton_suite.configure(command=lambda: self.derniere_page())
         else:
             self.bouton_suite.configure(command=lambda: self.recuperer_reponse())
@@ -228,7 +205,6 @@ class PageQuestion(Page):
             raison_erreur = None 
         if raison_erreur == None:
             self.reponses_obtenues.append(reponse_recue)
-            print(self.reponses_obtenues)
             page_suivante(self.page, self.prochaine_page, 'x', 1)
         else:
             self.message_erreur.configure(text = raison_erreur)
@@ -239,8 +215,8 @@ class PageQuestion(Page):
         Lorsque la dernière question a été répondue, ajoute la dernière réponse à la liste des réponses
         et acquiert les résultats selon les réponses reçues.
         '''
-        print('Dernière page')
         self.recuperer_reponse()
+        tkinter.Label(self.page, text='Chargement des résultats en cours...', font=('Ink Free', 20), background='white').place(anchor = 'n', relx=0.5, rely = 0.6)
         page_resultats1_classe.bilan = main()
         page_resultats1_classe.initialisation_indicateurs()
         page_resultats1_classe.affichage_resultat.configure(text=str(round(page_resultats1_classe.bilan['note_actuelle'], 2))+'%')
@@ -257,22 +233,22 @@ class PageQuestion(Page):
         return cls.reponses_obtenues
 
 association_questions = {
-    1:{'sujet':"Âge", 'colonne': 'age', 'position_y': 110, 'couleur':'aquamarine1', 'unite':'ans'},
-    2:{'sujet':"Genre", 'colonne': 'gender', 'position_y': 150, 'couleur':'light pink', 'unite':''},
-    3:{'sujet':"Heures d'étude", 'colonne': 'study_hours_per_day', 'position_y': 190, 'couleur':'light blue', 'unite':'h'},
-    4:{'sujet':"Heures sur téléphone cellulaire", 'colonne': 'smartphone_usage_hours', 'position_y': 230, 'couleur':'khaki1', 'unite':'h'},
-    5:{'sujet':"Heures sur réseaux sociaux", 'colonne': 'social_media_hours', 'position_y': 270, 'couleur':'aquamarine1', 'unite':'h'},
-    6:{'sujet':"Heures sur les jeux vidéos", 'colonne': 'gaming_hours', 'position_y': 310, 'couleur':'light pink', 'unite':'h'},
-    7:{'sujet':"Heures sur services de diffusion", 'colonne': 'streaming_hours', 'position_y': 350, 'couleur':'light blue', 'unite':'h'},
-    8:{'sujet':"Heures de sommeil", 'colonne': 'sleep_hours', 'position_y': 390, 'couleur':'khaki1', 'unite':'h'},
-    9:{'sujet':"Heures d'activité physique", 'colonne': 'exercise_hours', 'position_y': 430, 'couleur':'aquamarine1', 'unite':'h'},
-    10:{'sujet':"Pourcentage de cours présents", 'colonne': 'class_attendance_percent', 'position_y': 470, 'couleur':'light pink', 'unite':'%'},
-    11:{'sujet':"Pourcentage de travaux complétés", 'colonne': 'assignment_completion_percent', 'position_y': 510, 'couleur':'light blue', 'unite':'%'},
-    12:{'sujet':"Tasses de café consommés", 'colonne': 'caffeine_intake_cups', 'position_y': 550, 'couleur':'khaki1', 'unite':'tasse(s)'},
-    13:{'sujet':"État de santé mentale", 'colonne': 'mental_health_status', 'position_y': 590, 'couleur':'aquamarine1', 'unite':''},
-    14:{'sujet':"Niveau d'éducation des parents", 'colonne': 'parent_education_level', 'position_y': 630, 'couleur':'light pink', 'unite':''},
-    15:{'sujet':"Qualité de la connexion Internet", 'colonne': 'internet_quality', 'position_y': 670, 'couleur':'light blue', 'unite':''},
-    16:{'sujet':"Niveau de motivation", 'colonne': 'motivation_level', 'position_y': 710, 'couleur':'khaki1', 'unite':'/10'}
+    1:{'sujet':"Âge", 'colonne': 'age', 'position_y': 150, 'couleur':'aquamarine1', 'unite':'ans'},
+    2:{'sujet':"Genre", 'colonne': 'gender', 'position_y': 190, 'couleur':'light pink', 'unite':''},
+    3:{'sujet':"Heures d'étude", 'colonne': 'study_hours_per_day', 'position_y': 230, 'couleur':'light blue', 'unite':'h'},
+    4:{'sujet':"Heures sur téléphone cellulaire", 'colonne': 'smartphone_usage_hours', 'position_y': 270, 'couleur':'khaki1', 'unite':'h'},
+    5:{'sujet':"Heures sur réseaux sociaux", 'colonne': 'social_media_hours', 'position_y': 310, 'couleur':'aquamarine1', 'unite':'h'},
+    6:{'sujet':"Heures sur les jeux vidéos", 'colonne': 'gaming_hours', 'position_y': 350, 'couleur':'light pink', 'unite':'h'},
+    7:{'sujet':"Heures sur services de diffusion", 'colonne': 'streaming_hours', 'position_y': 390, 'couleur':'light blue', 'unite':'h'},
+    8:{'sujet':"Heures de sommeil", 'colonne': 'sleep_hours', 'position_y': 430, 'couleur':'khaki1', 'unite':'h'},
+    9:{'sujet':"Heures d'activité physique", 'colonne': 'exercise_hours', 'position_y': 470, 'couleur':'aquamarine1', 'unite':'h'},
+    10:{'sujet':"Pourcentage de cours présents", 'colonne': 'class_attendance_percent', 'position_y': 510, 'couleur':'light pink', 'unite':'%'},
+    11:{'sujet':"Pourcentage de travaux complétés", 'colonne': 'assignment_completion_percent', 'position_y': 550, 'couleur':'light blue', 'unite':'%'},
+    12:{'sujet':"Tasses de café consommés", 'colonne': 'caffeine_intake_cups', 'position_y': 590, 'couleur':'khaki1', 'unite':'tasse(s)'},
+    13:{'sujet':"État de santé mentale", 'colonne': 'mental_health_status', 'position_y': 630, 'couleur':'aquamarine1', 'unite':''},
+    14:{'sujet':"Niveau d'éducation des parents", 'colonne': 'parent_education_level', 'position_y': 670, 'couleur':'light pink', 'unite':''},
+    15:{'sujet':"Qualité de la connexion Internet", 'colonne': 'internet_quality', 'position_y': 710, 'couleur':'light blue', 'unite':''},
+    16:{'sujet':"Niveau de motivation", 'colonne': 'motivation_level', 'position_y': 750, 'couleur':'khaki1', 'unite':'/10'}
 }
 
 class IndicateurPlacement:
@@ -354,7 +330,7 @@ class IndicateurPlacement:
             animation_x([self.bloc, self.bouton], [1600, 1600], 10)
             self.mouvement_vers_ext = False
 
-class PageResultat1(Page): # -- Afficher résultat
+class PageResultat1(Page):
     def __init__(self):
         '''
         Initialise les éléments de la page 1 des résultats et les variables associées.
@@ -367,7 +343,7 @@ class PageResultat1(Page): # -- Afficher résultat
         ttk.Label(self.page, text='Selon vos habitudes, il est probable que vous obteniez une note de', font=('Ink Free', 40), background='white', wraplength=700, justify='center').place(anchor = 'nw', relx=0.1, rely = 0.3)
         self.affichage_resultat = ttk.Label(self.page, text='N/A', font=('Ink Free', 60), background='white')
         self.affichage_resultat.place(anchor = 'nw', relx=0.2, rely = 0.6)
-        ttk.Label(self.page, text="Comparez vos habitudes avec la moyenne!", font=('Ink Free', 25), background='white').place(anchor = 'nw', relx=0.55, rely = 0.05)
+        ttk.Label(self.page, text="Comparez vos habitudes avec la moyenne!", font=('Ink Free', 25), background='white').place(anchor = 'nw', relx=0.55, rely = 0.1)
         #Initialisation du bouton de la suite
         self.bouton_suite = tkinter.Button(self.page, text='Suivant', bg = 'light pink', font=('Ink Free', 30), justify='left')
         self.bouton_suite.place(anchor = 'nw', relx=0.15, rely = 0.87, width = 400)
