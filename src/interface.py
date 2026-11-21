@@ -7,20 +7,18 @@ import os
 from donnees import charger_donnees
 from main import main, conversion_langue, confirmation_reponse
 
-if os.environ.get('DISPLAY','') == '':
-    os.environ.__setitem__('DISPLAY', ':0.0')
-
-def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation = True)->None:
+def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation:bool = True)->None:
     '''
     Cache les éléments de la page actuellement visible et fait apparaitre les éléments de la prochaine page.
     Entrées:
-        actuelle: Tkinter Frame qui contient tous les éléments de la page à cacher
-        prochaine: Tkinter Frame qui contient tous les éléments de la page à faire apparaître
-        coordonnee: Les valeurs possibles sont 'x' et 'y'. Indiquent l'axe sur lequel le déplacement est fait.
-        direction: valeur de 1 ou -1, indique la direction de la transition (1 pour aller vers la droite ou le haut, -1 pour aller vers la gauche ou le bas)
+        actuelle (tkinter.ttk.Frame): Le frame de la page à cacher
+        prochaine (tkinter.ttk.Frame): Le frame de la page à faire apparaître
+        coordonnee (str): Les valeurs possibles sont 'x' et 'y'. Indiquent l'axe sur lequel le déplacement est fait.
+        direction (int): valeur de 1 ou -1, indique la direction de la transition (1 pour aller vers la droite ou le haut, -1 pour aller vers la gauche ou le bas)
+        animation (bool): Indique si une animation jouera lors de la transition entre les pages
     Aucune sortie
     '''
-    #(directement mettre prochaine à x=0, y=0)
+
     if animation == False:
         actuelle.place_forget()
         prochaine.place(x=0, y=0, width=1600, height=900)
@@ -48,13 +46,13 @@ def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coord
     #code par IA
     return
 
-def animation_x(frames:list, position_finales:list, deplacement:int)->None:
+def animation_x(frames:list, position_finales:list, deplacement:int=10)->None:
     '''
-    Permet de déplacer selon l'axe des x les objets Tkinter Frame vers leur position finale respective.
+    Permet de déplacer progressivement selon l'axe des x les objets Tkinter Frame vers leur position finale respective.
     Entrées:
-        frames: liste d'objets Tkinter Frame à déplacer
-        positions_finales: liste des positions finales respectives à chaque élément de frames
-        deplacement: Nombre de pixels de déplacement effectué à tous les 6 ms. Valeur par défaut de 10.
+        frames (list): liste d'objets Tkinter Frame (tkinter.ttk.Frame) à déplacer
+        positions_finales (list): liste des positions finales (int) respectives à chaque élément de frames
+        deplacement (int): Nombre de pixels de déplacement effectué à tous les 6 ms. Valeur par défaut de 10.
     Aucune sortie
     '''
     if frames[0].winfo_x() != position_finales[0]:
@@ -66,11 +64,11 @@ def animation_x(frames:list, position_finales:list, deplacement:int)->None:
 
 def animation_y(frames, position_finales, deplacement=10)->None:
     '''
-    Permet de déplacer selon l'axe des y les objets Tkinter Frame vers leur position finale respective.
+    Permet de déplacer progressivement selon l'axe des y les objets Tkinter Frame vers leur position finale respective.
     Entrées:
-        frames: liste d'objets Tkinter Frame à déplacer
-        positions_finales: liste des positions finales respectives à chaque élément de frames
-        deplacement: Nombre de pixels de déplacement effectué à tous les 6 ms. Valeur par défaut de 10.
+        frames (list): liste d'objets Tkinter Frame (tkinter.ttk.Frame) à déplacer
+        positions_finales (list): liste des positions finales (int) respectives à chaque élément de frames
+        deplacement (int): Nombre de pixels de déplacement effectué à tous les 6 ms. Valeur par défaut de 10.
     Aucune sortie
     '''
     if frames[0].winfo_y() != position_finales[0]:
@@ -81,16 +79,23 @@ def animation_y(frames, position_finales, deplacement=10)->None:
         root.update_idletasks()
 
 class Page(ABC):
-    def __init__(self):
+    def __init__(self)->None:
         '''
         Initialise les éléments de base de chaque page, étant le ttk.Frame et l'arrière_plan.
+        Entrée:
+            self(Page): une instance de la classe Page
+        Aucune sortie
         '''
         self.page = ttk.Frame(master=root)
         tkinter.Label(self.page, image=image_arriere_plan).place(x=0,y=0,relwidth=1,relheight=1)
     
-    def frame_page(self):
+    def frame_page(self)->None:
         '''
         Retourne la page sous forme de Tkinter Frame
+        Entrée:
+            self(Page): une instance de la classe Page
+        Sortie:
+            page (tkinter.ttk.Frame): Le frame de la page actuelle
         '''
         return self.page
 
@@ -102,9 +107,12 @@ class Page(ABC):
         pass
 
 class PagePrincipale(Page):
-    def __init__(self):
+    def __init__(self)->None:
         '''
         Initialise les éléments de la page principale.
+        Entrée:
+            self(PagePrincipale): une instance de la classe PagePrincipale
+        Aucune sortie
         '''
         super().__init__()
         self.page.place(width=1600, height=900)
@@ -116,7 +124,7 @@ class PagePrincipale(Page):
         self.bouton2.place(anchor = 'n', relx=0.5, rely = 0.55, relwidth=0.4, relheight=0.12)
         self.bouton3.place(anchor = 'n', relx=0.5, rely = 0.7, relwidth=0.4, relheight=0.12)
 
-    def configuration_bouton(self):
+    def configuration_bouton(self)->None:
         self.bouton1.configure(command=lambda: page_suivante(self.page, page_q1, 'x', 1))
             #code par IA modifié
         self.bouton2.configure(command=lambda: page_suivante(self.page, page_a_propos, 'y'))
@@ -124,9 +132,12 @@ class PagePrincipale(Page):
         self.bouton3.configure(command= lambda: root.quit())
 
 class PageAPropos(Page): 
-    def __init__(self):
+    def __init__(self)->None:
         '''
         Initialise les éléments de la page à propos.
+        Entrée:
+            self(PageAPropos): une instance de la classe PagePrincipale
+        Aucune sortie
         '''
         texte_a_propos = "Ceci est une application qui a été crée dans le cadre du projet 2 du cours INF1007. " \
         "À partir d'un ensemble de données disponible en ligne, nous avons entrainé un modèle permettant de prédire la note qu'aurait un étudiant de l'âge de 17 à 25 ans selon ses habitudes et d'autres caractéristiques de sa vie." \
@@ -138,19 +149,21 @@ class PageAPropos(Page):
         self.bouton_retour = tkinter.Button(self.page, text='Retour', font=('Ink Free', 30), bg = 'aquamarine1') 
         self.bouton_retour.place(anchor = 'n', relx=0.5, rely = 0.8)
 
-    def configuration_bouton(self):
+    def configuration_bouton(self)->None:
         self.bouton_retour.configure(command=lambda: page_suivante(self.page, page_principale, 'y', -1))
 
 class PageQuestion(Page): 
     reponses_obtenues = [] #données pour test: [19.0, 'female', 4.0, 3.0, 2.0, 0.0, 0.0, 7.0, 0.47, 100.0, 95.0, 0.0, 'poor', 'highschool', 'good', 8.0]
-    def __init__(self, type: str, question: str, prochaine_page:ttk.Frame, options: list=None):
+    
+    def __init__(self, type: str, question: str, prochaine_page:ttk.Frame, options: list)->None:
         '''
-        Initialise la page de la question et des variables.
+        Initialise la page de la question et des variables utilisés.
         Entrées:
-        type: 'écrit' ou 'choix', détermine le mode de réponse.
-        question: La question qui sera affichée sur l'écran.
-        prochaine_page: La page qui suivra la page actuelle.
-        options: Pour une question écrite, définit la valeur minimale et maximale des réponses possibles. 
+            self (PageQuestion): une instance de la classe PageQuestion
+            type (str): valeurs possibles de 'écrit' ou 'choix', détermine le mode de réponse.
+            question (str): La question qui sera affichée sur l'écran.
+            prochaine_page (tkinter.ttk.Frame): La page qui suivra la page actuelle.
+            options (list): Pour une question écrite, définit la valeur minimale et maximale des réponses possibles. 
                  Pour une question à choix de réponses, définit les options de réponses.
         Aucune sortie
         '''
@@ -167,8 +180,6 @@ class PageQuestion(Page):
             self.entree_reponse = ttk.Entry(self.page, textvariable=self.reponse, font=('Ink Free', 20)).place(anchor = 'n', relx=0.5, rely = 0.5, relwidth=0.2)
             self.message_erreur = tkinter.Label(self.page, text='', font=('Ink Free', 20), background='white', foreground='red')
         elif type == 'choix':
-            if options == None:
-                options = [] # la liste des choix possibles est vide
             self.reponse = tkinter.StringVar()
             self.entree_reponse = ttk.Combobox(
                 self.page, 
@@ -184,16 +195,19 @@ class PageQuestion(Page):
         self.bouton_suite = tkinter.Button(self.page, image=image_fleche, bg = 'gray80')
         self.bouton_suite.place(anchor = 'nw', height = 40, width=40, relx=0.6, rely = 0.5)
 
-    def configuration_bouton(self):
+    def configuration_bouton(self)->None:
         if self.prochaine_page == page_resultats1:
             self.bouton_suite.configure(command=lambda: self.derniere_page())
         else:
             self.bouton_suite.configure(command=lambda: self.recuperer_reponse())
 
-    def recuperer_reponse(self):
+    def recuperer_reponse(self)->None:
         '''
         Sauvegarde la réponse et fait la transition vers la prochaine page si la réponse est valide.
         Si la réponse est invalide, affiche un message d'erreur sur l'interface.
+        Entrée:
+            self (PageQuestion): une instance de la classe PageQuestion
+        Aucune sortie
         '''
         reponse_recue = self.reponse.get()
         if self.type_question == 'ecrit':
@@ -213,19 +227,23 @@ class PageQuestion(Page):
             self.message_erreur.configure(text = raison_erreur)
             self.message_erreur.place(anchor = 'n', relx=0.5, rely = 0.43)
 
-    def derniere_page(self):
+    def derniere_page(self)->None:
         '''
-        Lorsque la dernière question a été répondue, ajoute la dernière réponse à la liste des réponses
-        et acquiert les résultats selon les réponses reçues.
+        Lorsque la dernière question a été répondue, ajoute la dernière réponse à la liste des réponses, 
+        acquiert le bilan des résultats selon les réponses reçues et initialise les éléments dépendants 
+        de la réponse dans la page de résultats.
+        Entrée:
+            self (PageQuestion): une instance de la classe PageQuestion
+        Aucune sortie
         '''
-        self.recuperer_reponse()
         tkinter.Label(self.page, text='Chargement des résultats en cours...', font=('Ink Free', 20), background='white').place(anchor = 'n', relx=0.5, rely = 0.6)
+        self.recuperer_reponse()
         page_resultats1_classe.bilan = main()
         page_resultats1_classe.initialisation_indicateurs()
         page_resultats1_classe.affichage_resultat.configure(text=str(round(page_resultats1_classe.bilan['note_actuelle'], 2))+'%')
 
     @classmethod
-    def retourner_reponses(cls):
+    def retourner_reponses(cls)->list:
         '''
         Retourne la liste des réponses obtenues.
         Entrée:
@@ -255,14 +273,16 @@ association_questions = {
 }
 
 class IndicateurPlacement:
-    def __init__(self, page:ttk.Frame, index_question: int, position_bloc = 'bas')->None:
+    def __init__(self, page:ttk.Frame, index_question: int, position_bloc:str = 'bas')->None:
         '''
         Initialise les éléments de l'indicateur de placement de la réponse de l'utilisateur.
         Entrées:
-            page: La page dans laquelle l'indicateur apparait.
-            index_question: Le numéro correspondant à la question actuelle, d'une valeur de 1 à 15.
-            position_bloc: Indique où le bloc contenant l'information devrait être orientée sans que
-            son contenu soit caché par le bas de la fenêtre.
+            self (IndicateurPlacement): Une instance de la classe IndicateurPlacement.
+            page (tkinter.ttk.Frame): La page dans laquelle l'indicateur apparait.
+            index_question (int): Le numéro correspondant à la question actuelle telle que définie dans le 
+                dictionnaire association_questions, d'une valeur de 1 à 15.
+            position_bloc (str): Valeurs possibles de 'bas' et 'haut'. Indique où le bloc contenant l'information 
+                devrait être orientée sans que son contenu soit caché par le bas de la fenêtre.
         Aucune sortie
         '''
         #Initialisation des variables
@@ -302,16 +322,22 @@ class IndicateurPlacement:
         self.bouton.configure(command = lambda: self.animation_bloc())
         self.mouvement_vers_ext = False
 
-    def placer_bloc(self):
+    def placer_bloc(self)->None:
         '''
         Permet de placer le bloc par dessus les boutons des autres indicateurs afin que ceux-ci ne
         cachent pas l'information contenue dans le bloc.
+        Entrée:
+            self (IndicateurPlacement): Une instance de la classe IndicateurPlacement.
+        Aucune sortie
         '''
         self.bloc.tkraise()
 
-    def mise_a_jour_texte(self):
+    def mise_a_jour_texte(self)->None:
         '''
         Ajoute la réponse de l'utilisateur et la moyenne ou la valeur la plus fréquente dans le texte affichant ces informations.
+        Entrée:
+            self (IndicateurPlacement): Une instance de la classe IndicateurPlacement.
+        Aucune sortie
         '''
         if type(PageQuestion.reponses_obtenues[self.index_question-1]) == float:
             self.entree_utilisateur.configure(text = 'Vous:'+ str(PageQuestion.reponses_obtenues[self.index_question-1])+self.unite)
@@ -322,9 +348,12 @@ class IndicateurPlacement:
             reponse_frequente = conversion_langue(reponse_frequente.lower(), 'Anglais')
             self.entree_moyenne.configure(text = 'Valeur plus fréquente:'+ reponse_frequente)
 
-    def animation_bloc(self):
+    def animation_bloc(self)->None:
         '''
         Gère la direction et distance de l'animation de déplacement des blocs.
+        Entrée:
+            self (IndicateurPlacement): Une instance de la classe IndicateurPlacement.
+        Aucune sortie
         '''
         if self.mouvement_vers_ext == False:
             animation_x([self.bloc, self.bouton], [950, 950], -10)
@@ -334,9 +363,12 @@ class IndicateurPlacement:
             self.mouvement_vers_ext = False
 
 class PageResultat1(Page):
-    def __init__(self):
+    def __init__(self)->None:
         '''
         Initialise les éléments de la page 1 des résultats et les variables associées.
+        Entrée:
+            self (PageResultat1): Une instance de la classe PageResultat1.
+        Aucune sortie
         '''
         self.liste_indicateurs = []
         self.bilan = None
@@ -351,9 +383,12 @@ class PageResultat1(Page):
         self.bouton_suite = tkinter.Button(self.page, text='Suivant', bg = 'light pink', font=('Ink Free', 30), justify='left')
         self.bouton_suite.place(anchor = 'nw', relx=0.15, rely = 0.87, width = 400)
     
-    def initialisation_indicateurs(self):
+    def initialisation_indicateurs(self)->None:
         '''
         Initialise les indicateurs de placement et le résultat lorsque les réponses seront reçues.
+        Entrée:
+            self (PageResultat1): Une instance de la classe PageResultat1.
+        Aucune sortie
         '''
         for i in range(1, len(association_questions)+1):
             if i < 8:
@@ -364,16 +399,27 @@ class PageResultat1(Page):
             indicateur.placer_bloc()
             indicateur.mise_a_jour_texte()    
 
-    def configuration_bouton(self):
+    def configuration_bouton(self)->None:
         self.bouton_suite.configure(command = lambda: self.vers_resultat2())
 
-    def vers_resultat2(self):
-        #print('Bilan :', page_resultats1_classe.bilan)
-        page_suivante(self.page, page_resultats2, 'x', 1)
+    def vers_resultat2(self)->None:
+        '''
+        Initialise le texte et fait la transition vers la prochaine page de résultats.
+        Entrée:
+            self (PageResultat1): Une instance de la classe PageResultat1.
+        Aucune sortie
+        '''
         page_resultats2_classe.mise_a_jour_texte()
-        
+        page_suivante(self.page, page_resultats2, 'x', 1)
+      
 class PageResultat2(Page):
-    def __init__(self):
+    def __init__(self)->None:
+        '''
+        Initialise les éléments de la page des résultats et les variables associées.
+        Entrée:
+            self (PageResultat2): Une instance de la classe PageResultat2.
+        Aucune sortie
+        '''
         super().__init__()
         self.texte = ttk.Label(self.page, text = '', font=('Ink Free', 40), background='white', wraplength=1400)
         self.texte.place(anchor = 'n', relx=0.5, rely = 0.1)
@@ -386,15 +432,27 @@ class PageResultat2(Page):
         self.texte_caracteristique.place(anchor='n', relx=0.5, rely = 0.4)
         self.texte_changement.place(anchor='n', relx=0.5, rely = 0.55)
 
-    def mise_a_jour_texte(self):
+    def mise_a_jour_texte(self)->None:
+        '''
+        Met à jour le texte sur cette page selon le bilan des résultats obtenus.
+        Entrée:
+            self (PageResultat2): Une instance de la classe PageResultat2.
+        Aucune sortie
+        '''
         self.texte.configure(text=f'Pour obtenir une note de {round(page_resultats1_classe.bilan['note_apres'], 2)}% (hausse de {round(page_resultats1_classe.bilan['gain'], 2)}%), une habitude que vous pourriez changer serait:')
         self.texte_caracteristique.configure(text=page_resultats1_classe.bilan['caracteristique_affiche'])
         self.texte_changement.configure(text=page_resultats1_classe.bilan['message_affiche'])
 
-    def configuration_bouton(self):
+    def configuration_bouton(self)->None:
         self.bouton_retour.configure(command=lambda: self.retour_page_principale())
 
-    def retour_page_principale(self):
+    def retour_page_principale(self)->None:
+        '''
+        Fait la transition vers la page principale et réinitialise les réponses de l'utilisateur
+        Entrée:
+            self (PageResultat2): Une instance de la classe PageResultat2.
+        Aucune sortie
+        '''
         page_suivante(self.page, page_principale, 'y', 1)
         PageQuestion.reponses_obtenues = []
 
