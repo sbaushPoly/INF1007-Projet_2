@@ -153,7 +153,7 @@ class PageAPropos(Page):
         self.bouton_retour.configure(command=lambda: page_suivante(self.page, page_principale, 'y', -1))
 
 class PageQuestion(Page): 
-    reponses_obtenues = [] #données pour test: [19.0, 'female', 4.0, 3.0, 2.0, 0.0, 0.0, 7.0, 0.47, 100.0, 95.0, 0.0, 'poor', 'highschool', 'good', 8.0]
+    _reponses_obtenues = [] #données pour test: [19.0, 'female', 4.0, 3.0, 2.0, 0.0, 0.0, 7.0, 0.47, 100.0, 95.0, 0.0, 'poor', 'highschool', 'good', 8.0]
     
     def __init__(self, type: str, question: str, prochaine_page:ttk.Frame, options: list)->None:
         '''
@@ -174,11 +174,12 @@ class PageQuestion(Page):
         #Initialisation des éléments de la page
         super().__init__()
         ttk.Label(self.page, text=question, font=('Ink Free', 40), background='white', wraplength=1280).place(anchor = 'n', relx=0.5, rely = 0.25)
+        self.message_erreur = tkinter.Label(self.page, text='', font=('Ink Free', 20), background='white', foreground='red')
+        self.texte_chargement = tkinter.Label(self.page, text='Chargement des résultats en cours...', font=('Ink Free', 20), background='white')
         #Initialisation de l'entrée de la réponse
         if type == 'ecrit':
             self.reponse = tkinter.StringVar()
             self.entree_reponse = ttk.Entry(self.page, textvariable=self.reponse, font=('Ink Free', 20)).place(anchor = 'n', relx=0.5, rely = 0.5, relwidth=0.2)
-            self.message_erreur = tkinter.Label(self.page, text='', font=('Ink Free', 20), background='white', foreground='red')
         elif type == 'choix':
             self.reponse = tkinter.StringVar()
             self.entree_reponse = ttk.Combobox(
@@ -217,11 +218,14 @@ class PageQuestion(Page):
                     reponse_recue = float(reponse_recue)
             else:
                 raise ValueError('Intervalle invalide')
-        else:
-            reponse_recue = conversion_langue(reponse_recue, 'Français')
-            raison_erreur = None 
-        if raison_erreur == None:
-            self.reponses_obtenues.append(reponse_recue)
+        else: #Si question à choix de réponse
+            if reponse_recue == '': #Pour aucune réponse
+                raison_erreur = 'Veuillez entrer une réponse'
+            else: #Pour réponse attendue
+                reponse_recue = conversion_langue(reponse_recue, 'Français')
+                raison_erreur = None 
+        if raison_erreur == None:#Si il n'y a pas d'erreur
+            self._reponses_obtenues.append(reponse_recue)
             page_suivante(self.page, self.prochaine_page, 'x', 1)
         else:
             self.message_erreur.configure(text = raison_erreur)
@@ -236,7 +240,7 @@ class PageQuestion(Page):
             self (PageQuestion): une instance de la classe PageQuestion
         Aucune sortie
         '''
-        tkinter.Label(self.page, text='Chargement des résultats en cours...', font=('Ink Free', 20), background='white').place(anchor = 'n', relx=0.5, rely = 0.6)
+        self.texte_chargement.place(anchor = 'n', relx=0.5, rely = 0.6)
         self.recuperer_reponse()
         page_resultats1_classe.bilan = main()
         page_resultats1_classe.initialisation_indicateurs()
@@ -251,7 +255,7 @@ class PageQuestion(Page):
         Sortie:
             cls.reponses_obtenues (list): La liste des réponses de l'utilisateur dans l'ordre des questions
         '''
-        return cls.reponses_obtenues
+        return cls._reponses_obtenues
 
 association_questions = {
     1:{'sujet':"Âge", 'colonne': 'age', 'position_y': 150, 'couleur':'aquamarine1', 'unite':'ans'},
@@ -339,11 +343,11 @@ class IndicateurPlacement:
             self (IndicateurPlacement): Une instance de la classe IndicateurPlacement.
         Aucune sortie
         '''
-        if type(PageQuestion.reponses_obtenues[self.index_question-1]) == float:
-            self.entree_utilisateur.configure(text = 'Vous:'+ str(PageQuestion.reponses_obtenues[self.index_question-1])+self.unite)
+        if type(PageQuestion._reponses_obtenues[self.index_question-1]) == float:
+            self.entree_utilisateur.configure(text = 'Vous:'+ str(PageQuestion._reponses_obtenues[self.index_question-1])+self.unite)
             self.entree_moyenne.configure(text = 'En moyenne:'+ str(round(self.df[self.colonne].mean(), 2))+self.unite)
         else:
-            self.entree_utilisateur.configure(text = 'Vous:'+ PageQuestion.reponses_obtenues[self.index_question-1])
+            self.entree_utilisateur.configure(text = 'Vous:'+ conversion_langue(PageQuestion._reponses_obtenues[self.index_question-1], 'Anglais'))
             reponse_frequente = str(self.df.value_counts(self.colonne).idxmax())
             reponse_frequente = conversion_langue(reponse_frequente.lower(), 'Anglais')
             self.entree_moyenne.configure(text = 'Valeur plus fréquente:'+ reponse_frequente)
@@ -454,7 +458,8 @@ class PageResultat2(Page):
         Aucune sortie
         '''
         page_suivante(self.page, page_principale, 'y', 1)
-        PageQuestion.reponses_obtenues = []
+        PageQuestion._reponses_obtenues = []
+        PageQuestion.texte_chargement.place_forget()
 
 #Initialisation de l'interface utilisateur
 root = tkinter.Tk()
