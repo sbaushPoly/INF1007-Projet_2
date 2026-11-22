@@ -1,0 +1,30 @@
+{
+    "colonnes": [
+        "age",
+        "study_hours_per_day",
+        "smartphone_usage_hours",
+        "social_media_hours",
+        "gaming_hours",
+        "streaming_hours",
+        "sleep_hours",
+        "exercise_hours",
+        "class_attendance_percent",
+        "assignment_completion_percent",
+        "caffeine_intake_cups",
+        "motivation_level",
+        "gender_Male",
+        "mental_health_status_Good",
+        "mental_health_status_Poor",
+        "parent_education_level_HighSchool",
+        "parent_education_level_Masters",
+        "parent_education_level_PhD",
+        "internet_quality_Good",
+        "internet_quality_Poor"
+    ],
+    "variable_cible": "final_exam_score",
+    "modele": "LinearRegression",
+    "rmse": 12.095782244185674,
+    "r2": 0.5943994575784146,
+    "nb_observations": 12589,
+    "fichier_modele": "modele1_entra\u00een\u00e9.joblib"
+}

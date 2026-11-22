@@ -5,6 +5,36 @@ from src.main import prediction, amelioration
 class DonneeInvalideError(Exception):
     """Levée quand une réponse de l'utilisateur est manquante, invalide ou hors des limites."""
 
+@pytest.fixture
+def reponses():
+    return {
+        "genre": "Femme",
+        "sante_mentale": "Bonne",
+        "education_parents": "Doctorat",
+        "internet": "Bonne",
+        "age": 20,
+        "heures_etude": 6,
+        "temps_telephone": 1,
+        "temps_reseaux_sociaux": 0.5,
+        "temps_jeux": 0.5,
+        "temps_tele": 0.5,
+        "sommeil": 8,
+        "temps_exercice": 1.5,
+        "taux_presence": 98,
+        "taux_travail": 98,
+        "caffeine": 1,
+        "motivation": 9,
+    }
+
+@pytest.mark.parametrize(
+    ("cle", "valeur"),
+    [
+        ("age", 18),
+        ("sommeil", 8),
+        ("motivation", 10),
+    ],
+)
+
 def test_implementation_test_initial():
     assert src.donnees.implementation_test_initial() == True
 

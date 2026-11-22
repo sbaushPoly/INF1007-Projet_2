@@ -166,7 +166,10 @@ def prediction(model, reponse : dict) -> float:
     # 4. Afficher le résultat
     # prediction est un tableau (ex: [85.4]), on prend le premier élément avec [0]
     note_predite = float(prediction[0])
-    print(f"La note prédite pour cet étudiant est de : {note_predite:.2f}")
+    if note_predite < 0:
+        note_predite = 0
+    elif note_predite > 100:
+        note_predite = 100
     return note_predite
 
 
@@ -210,7 +213,9 @@ def amélioration(CAS_IDEAL, reponse: dict, model):
     rep_modifiee = dict(reponse)
     rep_modifiee[cle] = cible
     note_ameliorer = prediction(model, rep_modifiee)
-        
+    note_predite = prediction(model, reponse)
+    if note_ameliorer < note_predite:
+        return None
 
     return {
         "cle": cle,
@@ -328,5 +333,6 @@ def main():
             }
 
     #print(bilan)
-    return bilan
-#main()
+
+if __name__ == "__main__":
+    main()
