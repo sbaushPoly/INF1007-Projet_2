@@ -1,0 +1,47 @@
+Question 1: Quel est votre âge?
+Conditions: peut être converti en float, entre 17 et 25
+
+Quesiton 2: Quel est votre genre?
+Conditions: choix de réponses: Homme, Femme
+
+Question 3: Combien d'heures passez-vous à étudier chaque jour?
+Conditions: peut être converti en float (utiliser try/except), entre 0 et 24
+
+Question 4: Combien d'heures passez-vous par jour sur votre téléphone cellulaire?
+Conditions: peut être converti en float, entre 0 et 24
+
+Question 5: Combien d'heures passez-vous par jour sur les médias sociaux?
+Conditions: peut être converti en float, entre 0 et 24
+
+Question 6: Combien d'heures passez-vous par jour à jouer à des jeux vidéo?
+Conditions: peut être converti en float, entre 0 et 24
+
+Question 7: Combien d'heures passez-vous par jour à utiliser des services de diffusion en continu?
+Conditions: peut être converti en float, entre 0 et 24
+
+Question 8: Pendant combien d'heures dormez-vous chaque nuit?
+Conditions: peut être converti en float, entre 0 et 24
+
+Question 9: Combien d'heures par jour consacrez-vous aux activités physiques?
+Conditions: peut être converti en float, entre 0 et 24
+
+Question 10: En pourcentage, quelle est la proportion des cours auquels vous vous êtes présentés?
+Conditions: peut être converti en float, entre 0 et 100
+
+Question 11: En pourcentage, quelle est la proportion des travaux scolaires que vous avez complétés?
+Conditions: peut être converti en float, entre 0 et 100
+
+Question 12: Combien de tasses de café consommez-vous par jour?
+Conditions: peut être converti en int, 0 et plus
+
+Question 13: Comment décririez-vous votre état de santé mentale?
+Conditions: choix de réponses: Faible, Moyen, Bon
+
+Question 14: Quel est le niveau d'éducation de vos parents?
+Conditions: choix de réponses: Secondaire, Baccalauréat, Maitrise, Doctorat
+
+Question 15: Comment décririez-vous la qualité de votre connexion Internet?
+Conditions: choix de réponses: Faible, Moyenne, Bonne
+
+Question 16: Sur 10, quel est votre niveau de motivation face à vos études?
+Conditions: choix de réponses: peut être converti en float, entre 0 et 10

@@ -1,1 +1,6 @@
 pytest
+matplotlib==3.11.0
+pandas
+joblib
+scikit-learn
+numpy==2.5.4
