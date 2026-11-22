@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import os
+import sys
+sys.path.insert(0, 'src')
 from donnees import charger_donnees
 from main import main, conversion_langue, confirmation_reponse
 
@@ -142,6 +144,7 @@ class PageAPropos(Page):
         texte_a_propos = "Ceci est une application qui a été crée dans le cadre du projet 2 du cours INF1007. " \
         "À partir d'un ensemble de données disponible en ligne, nous avons entrainé un modèle permettant de prédire la note qu'aurait un étudiant de l'âge de 17 à 25 ans selon ses habitudes et d'autres caractéristiques de sa vie." \
         "\n\nCe modèle ayant été entrainé sur des données synthétiques, la prédiction donnée par cette application pourrait ne pas concorder avec les notes réelles obtenues." \
+        "\n\nSource de l'image de l'arrière plan : College Ruled Paper par BlazingFireBug sur DeviantArt (https://www.deviantart.com/blazingfirebug/art/College-Ruled-Paper-438389060)" \
         "\n\nDéveloppé par Saya Beauchemin et Ashley Buteau"
         super().__init__()
         ttk.Label(self.page, text='À propos', font=('Ink Free', 40), background='white').place(anchor = 'n', relx=0.5, rely = 0.1)
@@ -312,8 +315,8 @@ class IndicateurPlacement:
         #graphique
         fig = Figure(figsize=(4, 2), dpi=100)
         ax = fig.add_subplot()
-        dossier_actuel = os.path.dirname(os.path.abspath(__file__))
-        chemin = os.path.join(dossier_actuel, "donnees_propres.csv")
+        #dossier_actuel = os.path.dirname(os.path.abspath(__file__))
+        chemin = os.path.join('donnees', "donnees_propres.csv")
         self.df = charger_donnees(chemin)
         ax.hist(self.df[self.colonne], bins=10)
         canvas = FigureCanvasTkAgg(fig, master=self.bloc)
@@ -459,14 +462,16 @@ class PageResultat2(Page):
         '''
         page_suivante(self.page, page_principale, 'y', 1)
         PageQuestion._reponses_obtenues = []
-        PageQuestion.texte_chargement.place_forget()
+        page_q16_classe.texte_chargement.place_forget()
 
 #Initialisation de l'interface utilisateur
 root = tkinter.Tk()
 root.geometry('1600x900')
 #Initialisation des images utilisés
-image_arriere_plan = tkinter.PhotoImage(file='assets/papier_background.png')
-image_fleche = tkinter.PhotoImage(file='assets/fleche.png') 
+chemin_arriere_plan = os.path.join('assets', 'papier_background.png')
+image_arriere_plan = tkinter.PhotoImage(file=chemin_arriere_plan)
+chemin_fleche = os.path.join('assets', 'fleche.png')
+image_fleche = tkinter.PhotoImage(file=chemin_fleche) 
 #Initialisation pages
 page_principale_classe = PagePrincipale()
 page_principale = page_principale_classe.frame_page()

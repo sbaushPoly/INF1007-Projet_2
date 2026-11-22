@@ -1,6 +1,58 @@
 import pandas as pd
+import os
+import sys
+sys.path.insert(0, 'src')
 from modele import TestModele
+from donnees import prediction, amélioration
 import interface
+
+CAS_IDEAL = {
+    "heures_etude": {
+        "ideal": (5, 8), "echelle": 8,
+        "plus": "étudier davantage (visez environ (cible)h par jour)", #{cible:g}
+        "moins": "étudier un peu moins (visez environ (cible)h par jour)",
+    },
+    "temps_telephone": {
+        "ideal": (0, 2), "echelle": 10,
+        "moins": "réduire votre temps sur le cellulaire (visez environ (cible)h par jour)",
+    },
+    "temps_reseaux_sociaux": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire votre temps sur les réseaux sociaux (visez environ (cible)h par jour)",
+    },
+    "temps_jeux": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire vos heures de jeux vidéo (visez environ (cible)h par jour)",
+    },
+    "temps_tele": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire votre temps devant la télé ou le streaming (visez environ (cible)h par jour)",
+    },
+    "sommeil": {
+        "ideal": (7, 9), "echelle": 5,
+        "plus": "dormir davantage (visez environ (cible)h par nuit)",
+        "moins": "dormir un peu moins (visez environ (cible)h par nuit)",
+    },
+    "temps_exercice": {
+        "ideal": (1, 2), "echelle": 2,
+        "plus": "faire plus d'exercice (visez environ (cible)h par jour)",
+    },
+    "taux_presence": {
+        "ideal": (95, 100), "echelle": 50,
+        "plus": "assister à plus de cours (visez environ (cible)% de présence)",
+    },
+    "taux_travail": {
+        "ideal": (95, 100), "echelle": 50,
+        "plus": "remettre plus de travaux (visez environ (cible)% des travaux)",
+    },
+    "caffeine": {
+        "ideal": (0, 2), "echelle": 6,
+        "moins": "réduire votre consommation de café (visez environ (cible) tasse(s) par jour)",
+    },
+    "motivation": {
+        "ideal": (8, 10), "echelle": 8,
+        "plus": "travailler votre motivation (visez un niveau d'environ (cible) sur 10)",
+    },}
 
 def confirmation_reponse(reponse_recue:str, intervalle:list):
     '''
@@ -23,13 +75,15 @@ def confirmation_reponse(reponse_recue:str, intervalle:list):
     else:
         return "La réponse ne se trouve pas dans l'intervalle permise."
 
-def conversion_langue(mot, langue_initiale):
+def conversion_langue(mot:str, langue_initiale:str)->str:
     '''
     Convertit les mots vers leur valeur indiquée en anglais tel que dans le fichier csv, ou l'inverse.
     Entrées:
         mot (str): le mot à traduire
         langue_initiale (str): Valeurs possibles de 'Français' et 'Anglais'. 
         Indique la langue à partir de laquelle le mot est traduit.
+    Sortie:
+        mot_traduit (str): le mot traduit
     '''
     if langue_initiale == 'Français':
         match mot: 
@@ -79,7 +133,7 @@ def conversion_langue(mot, langue_initiale):
         return ValueError('Langue_initiale invalide')
     return mot_traduit
 
-def conversion_liste(reponse):
+def conversion_liste(reponse:list)->dict:
     '''
     Convertit les réponses obtenues de interface.py dans un format utilisable par prediction
     Entrée: 
@@ -234,54 +288,6 @@ def main():
     reponse = conversion_liste(reponse)
     note_predite = prediction(model, reponse)
 
-    CAS_IDEAL = {
-    "heures_etude": {
-        "ideal": (5, 8), "echelle": 8,
-        "plus": "étudier davantage (visez environ (cible)h par jour)", #{cible:g}
-        "moins": "étudier un peu moins (visez environ (cible)h par jour)",
-    },
-    "temps_telephone": {
-        "ideal": (0, 2), "echelle": 10,
-        "moins": "réduire votre temps sur le cellulaire (visez environ (cible)h par jour)",
-    },
-    "temps_reseaux_sociaux": {
-        "ideal": (0, 1), "echelle": 6,
-        "moins": "réduire votre temps sur les réseaux sociaux (visez environ (cible)h par jour)",
-    },
-    "temps_jeux": {
-        "ideal": (0, 1), "echelle": 6,
-        "moins": "réduire vos heures de jeux vidéo (visez environ (cible)h par jour)",
-    },
-    "temps_tele": {
-        "ideal": (0, 1), "echelle": 6,
-        "moins": "réduire votre temps devant la télé ou le streaming (visez environ (cible)h par jour)",
-    },
-    "sommeil": {
-        "ideal": (7, 9), "echelle": 5,
-        "plus": "dormir davantage (visez environ (cible)h par nuit)",
-        "moins": "dormir un peu moins (visez environ (cible)h par nuit)",
-    },
-    "temps_exercice": {
-        "ideal": (1, 2), "echelle": 2,
-        "plus": "faire plus d'exercice (visez environ (cible)h par jour)",
-    },
-    "taux_presence": {
-        "ideal": (95, 100), "echelle": 50,
-        "plus": "assister à plus de cours (visez environ (cible)% de présence)",
-    },
-    "taux_travail": {
-        "ideal": (95, 100), "echelle": 50,
-        "plus": "remettre plus de travaux (visez environ (cible)% des travaux)",
-    },
-    "caffeine": {
-        "ideal": (0, 2), "echelle": 6,
-        "moins": "réduire votre consommation de café (visez environ (cible) tasse(s) par jour)",
-    },
-    "motivation": {
-        "ideal": (8, 10), "echelle": 8,
-        "plus": "travailler votre motivation (visez un niveau d'environ (cible) sur 10)",
-    },}
-
     amelioration = amélioration(CAS_IDEAL, reponse, model)
 
     if amelioration == None:
@@ -333,6 +339,5 @@ def main():
             }
 
     #print(bilan)
-
-if __name__ == "__main__":
-    main()
+    return bilan
+#main()

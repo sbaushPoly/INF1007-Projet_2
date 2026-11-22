@@ -1,11 +1,61 @@
 import pytest
 from pathlib import Path
-from src.modele import Modele, TestModele
-from src.main import CAS_IDEAL, prediction, amélioration
+import sys
+sys.path.insert(0, 'src')
+from modele import Modele, TestModele
+from donnees import prediction, amélioration
+
+CAS_IDEAL = {
+    "heures_etude": {
+        "ideal": (5, 8), "echelle": 8,
+        "plus": "étudier davantage (visez environ (cible)h par jour)", #{cible:g}
+        "moins": "étudier un peu moins (visez environ (cible)h par jour)",
+    },
+    "temps_telephone": {
+        "ideal": (0, 2), "echelle": 10,
+        "moins": "réduire votre temps sur le cellulaire (visez environ (cible)h par jour)",
+    },
+    "temps_reseaux_sociaux": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire votre temps sur les réseaux sociaux (visez environ (cible)h par jour)",
+    },
+    "temps_jeux": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire vos heures de jeux vidéo (visez environ (cible)h par jour)",
+    },
+    "temps_tele": {
+        "ideal": (0, 1), "echelle": 6,
+        "moins": "réduire votre temps devant la télé ou le streaming (visez environ (cible)h par jour)",
+    },
+    "sommeil": {
+        "ideal": (7, 9), "echelle": 5,
+        "plus": "dormir davantage (visez environ (cible)h par nuit)",
+        "moins": "dormir un peu moins (visez environ (cible)h par nuit)",
+    },
+    "temps_exercice": {
+        "ideal": (1, 2), "echelle": 2,
+        "plus": "faire plus d'exercice (visez environ (cible)h par jour)",
+    },
+    "taux_presence": {
+        "ideal": (95, 100), "echelle": 50,
+        "plus": "assister à plus de cours (visez environ (cible)% de présence)",
+    },
+    "taux_travail": {
+        "ideal": (95, 100), "echelle": 50,
+        "plus": "remettre plus de travaux (visez environ (cible)% des travaux)",
+    },
+    "caffeine": {
+        "ideal": (0, 2), "echelle": 6,
+        "moins": "réduire votre consommation de café (visez environ (cible) tasse(s) par jour)",
+    },
+    "motivation": {
+        "ideal": (8, 10), "echelle": 8,
+        "plus": "travailler votre motivation (visez un niveau d'environ (cible) sur 10)",
+    },}
 
 @pytest.fixture(scope="module")
 def jeu_test():
-    fichier = Path(__file__).parents[1] / "src" / "archive" / "donnees_propres.csv"
+    fichier = Path(__file__).parents[1] / "donnees" / "donnees_propres.csv"
     donnees = Modele.charger_donnees(str(fichier))
     _, x_val, _, y_val, _ = Modele.separer_donnees(donnees)
     return x_val, y_val

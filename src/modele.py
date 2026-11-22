@@ -106,8 +106,8 @@ class TestModele:
         Returns:
             sklearn.linear_model.LinearRegression: Le modèle chargé.
         """
-        dossier_actuel = os.path.dirname(os.path.abspath(__file__))
-        chemin_modele = os.path.join(dossier_actuel, "archive", fichier)
+        dossier_actuel = os.path.dirname(os.path.abspath(__file__))[:-4] #[:-4] pour enlever '.src'
+        chemin_modele = os.path.join(dossier_actuel, "modeles", fichier)
         
         if not os.path.exists(chemin_modele):
             raise FileNotFoundError(f"Le fichier {fichier} n'existe pas.")
@@ -217,5 +217,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
