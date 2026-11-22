@@ -144,6 +144,7 @@ class PageAPropos(Page):
         texte_a_propos = "Ceci est une application qui a été crée dans le cadre du projet 2 du cours INF1007. " \
         "À partir d'un ensemble de données disponible en ligne, nous avons entrainé un modèle permettant de prédire la note qu'aurait un étudiant de l'âge de 17 à 25 ans selon ses habitudes et d'autres caractéristiques de sa vie." \
         "\n\nCe modèle ayant été entrainé sur des données synthétiques, la prédiction donnée par cette application pourrait ne pas concorder avec les notes réelles obtenues." \
+        "\n\nSource de l'image de l'arrière plan : College Ruled Paper par BlazingFireBug sur DeviantArt (https://www.deviantart.com/blazingfirebug/art/College-Ruled-Paper-438389060)" \
         "\n\nDéveloppé par Saya Beauchemin et Ashley Buteau"
         super().__init__()
         ttk.Label(self.page, text='À propos', font=('Ink Free', 40), background='white').place(anchor = 'n', relx=0.5, rely = 0.1)
