@@ -1,7 +1,9 @@
 import pytest
 from pathlib import Path
-from src.modele import Modele, TestModele
-from src.main import CAS_IDEAL, prediction, amélioration
+import sys
+sys.path.insert(0, 'src')
+from modele import Modele, TestModele
+from main import CAS_IDEAL, prediction, amélioration
 
 @pytest.fixture(scope="module")
 def jeu_test():

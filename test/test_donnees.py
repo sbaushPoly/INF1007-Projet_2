@@ -1,12 +1,13 @@
 import pytest
-import src.donnees
-from src.main import prediction, amelioration
+import sys
+sys.path.insert(0, 'src')
+import donnees
+from main import prediction, amélioration
+from exeptions import DonneeInvalideError
 
-class DonneeInvalideError(Exception):
-    """Levée quand une réponse de l'utilisateur est manquante, invalide ou hors des limites."""
 
 def test_implementation_test_initial():
-    assert src.donnees.implementation_test_initial() == True
+    assert donnees.implementation_test_initial() == True
 
 # ---------- Cas usuels ----------
 def test_prediction_rep_choix(reponses):
@@ -28,7 +29,7 @@ def test_valeurs_aux_bornes_acceptees(reponses, cle, valeur):
 
 def test_suggestion_none_aux_bords_de_la_zone_ideale(reponses, cle, valeur):
     reponses[cle] = valeur
-    assert amelioration(reponses) is None
+    assert amélioration(reponses) is None
 
 # ---------- Cas d'erreur ----------
 def test_valeurs_aux_bornes_acceptees(reponses, cle, valeur):
