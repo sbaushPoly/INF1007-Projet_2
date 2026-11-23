@@ -245,7 +245,8 @@ class PageQuestion(Page):
         '''
         self.texte_chargement.place(anchor = 'n', relx=0.5, rely = 0.6)
         self.recuperer_reponse()
-        page_resultats1_classe.bilan = main()
+
+        page_resultats1_classe.bilan = main(PageQuestion._reponses_obtenues)
         page_resultats1_classe.initialisation_indicateurs()
         page_resultats1_classe.affichage_resultat.configure(text=str(round(page_resultats1_classe.bilan['note_actuelle'], 2))+'%')
 
@@ -464,82 +465,97 @@ class PageResultat2(Page):
         PageQuestion._reponses_obtenues = []
         page_q16_classe.texte_chargement.place_forget()
 
-#Initialisation de l'interface utilisateur
-root = tkinter.Tk()
-root.geometry('1600x900')
-#Initialisation des images utilisés
-chemin_arriere_plan = os.path.join('assets', 'papier_background.png')
-image_arriere_plan = tkinter.PhotoImage(file=chemin_arriere_plan)
-chemin_fleche = os.path.join('assets', 'fleche.png')
-image_fleche = tkinter.PhotoImage(file=chemin_fleche) 
-#Initialisation pages
-page_principale_classe = PagePrincipale()
-page_principale = page_principale_classe.frame_page()
-page_a_propos_classe = PageAPropos()
-page_a_propos = page_a_propos_classe.frame_page()
-page_resultats1_classe = PageResultat1()
-page_resultats1 = page_resultats1_classe.frame_page()
-page_resultats2_classe = PageResultat2()
-page_resultats2 = page_resultats2_classe.frame_page()
-#Initialisation pages question
-page_q16_classe = PageQuestion('ecrit', "16. Sur 10, quel est votre niveau de motivation face à vos études?", page_resultats1, [0, 10])
-page_q16 = page_q16_classe.frame_page()
-page_q15_classe = PageQuestion('choix', "15. Comment décririez-vous la qualité de votre connexion Internet?", page_q16, ['Faible', 'Moyenne', 'Bonne'])
-page_q15 = page_q15_classe.frame_page()
-page_q14_classe = PageQuestion('choix', "14. Quel est le niveau d'éducation de vos parents?", page_q15, ['Secondaire', 'Baccalauréat', 'Maitrise', 'Doctorat'])
-page_q14 = page_q14_classe.frame_page()
-page_q13_classe = PageQuestion('choix', "13. Comment décririez-vous votre état de santé mentale?", page_q14, ['Faible', 'Moyen', 'Bon'])
-page_q13 = page_q13_classe.frame_page()
-page_q12_classe = PageQuestion('ecrit', "12. Combien de tasses de café consommez-vous par jour?", page_q13, [0, 10])
-page_q12 = page_q12_classe.frame_page()
-page_q11_classe = PageQuestion('ecrit', "11. En pourcentage, quelle est la proportion des travaux scolaires que vous avez complétés?", page_q12, [0, 100])
-page_q11 = page_q11_classe.frame_page()
-page_q10_classe = PageQuestion('ecrit', "10. En pourcentage, quelle est la proportion des cours auquels vous vous êtes présentés?", page_q11, [0, 100])
-page_q10 = page_q10_classe.frame_page()
-page_q9_classe = PageQuestion('ecrit', "9. Combien d'heures par jour consacrez-vous aux activités physiques?", page_q10, [0, 24])
-page_q9 = page_q9_classe.frame_page()
-page_q8_classe = PageQuestion('ecrit', "8. Pendant combien d'heures dormez-vous chaque nuit?", page_q9, [0, 24])
-page_q8 = page_q8_classe.frame_page()
-page_q7_classe = PageQuestion('ecrit', "7. Combien d'heures passez-vous par jour à utiliser des services de diffusion en continu?", page_q8, [0, 24])
-page_q7 = page_q7_classe.frame_page()
-page_q6_classe = PageQuestion('ecrit', "6. Combien d'heures passez-vous par jour à jouer à des jeux vidéo?", page_q7, [0, 24])
-page_q6 = page_q6_classe.frame_page()
-page_q5_classe = PageQuestion('ecrit', "5. Combien d'heures passez-vous par jour sur les médias sociaux?", page_q6, [0, 24])
-page_q5 = page_q5_classe.frame_page()
-page_q4_classe = PageQuestion('ecrit', "4. Combien d'heures passez-vous par jour sur votre téléphone cellulaire?", page_q5, [0, 24])
-page_q4 = page_q4_classe.frame_page()
-page_q3_classe = PageQuestion('ecrit', "3. Combien d'heures passez-vous à étudier chaque jour?", page_q4, [0, 24])
-page_q3 = page_q3_classe.frame_page()
-page_q2_classe = PageQuestion('choix', "2. Quel est votre genre?", page_q3, ['Homme', 'Femme'])
-page_q2 = page_q2_classe.frame_page()
-page_q1_classe = PageQuestion('ecrit', "1. Quel est votre âge?", page_q2, [17, 25])
-page_q1 = page_q1_classe.frame_page()
+def initialisation_interface():
+    #Initialisation de l'interface utilisateur
+    global root
+    root = tkinter.Tk()
+    root.geometry('1600x900')
+    #Initialisation des images utilisés
+    chemin_arriere_plan = os.path.join('assets', 'papier_background.png')
+    global image_arriere_plan
+    image_arriere_plan = tkinter.PhotoImage(file=chemin_arriere_plan)
+    chemin_fleche = os.path.join('assets', 'fleche.png')
+    global image_fleche
+    image_fleche = tkinter.PhotoImage(file=chemin_fleche) 
+    #Initialisation pages
+    page_principale_classe = PagePrincipale()
+    global page_principale
+    page_principale = page_principale_classe.frame_page()
+    page_a_propos_classe = PageAPropos()
+    global page_a_propos
+    page_a_propos = page_a_propos_classe.frame_page()
+    global page_resultats1_classe
+    page_resultats1_classe = PageResultat1()
+    global page_resultats1
+    page_resultats1 = page_resultats1_classe.frame_page()
+    global page_resultats2_classe
+    page_resultats2_classe = PageResultat2()
+    global page_resultats2
+    page_resultats2 = page_resultats2_classe.frame_page()
+    #Initialisation pages question
+    global page_q16_classe
+    page_q16_classe = PageQuestion('ecrit', "16. Sur 10, quel est votre niveau de motivation face à vos études?", page_resultats1, [0, 10])
+    page_q16 = page_q16_classe.frame_page()
+    page_q15_classe = PageQuestion('choix', "15. Comment décririez-vous la qualité de votre connexion Internet?", page_q16, ['Faible', 'Moyenne', 'Bonne'])
+    page_q15 = page_q15_classe.frame_page()
+    page_q14_classe = PageQuestion('choix', "14. Quel est le niveau d'éducation de vos parents?", page_q15, ['Secondaire', 'Baccalauréat', 'Maitrise', 'Doctorat'])
+    page_q14 = page_q14_classe.frame_page()
+    page_q13_classe = PageQuestion('choix', "13. Comment décririez-vous votre état de santé mentale?", page_q14, ['Faible', 'Moyen', 'Bon'])
+    page_q13 = page_q13_classe.frame_page()
+    page_q12_classe = PageQuestion('ecrit', "12. Combien de tasses de café consommez-vous par jour?", page_q13, [0, 10])
+    page_q12 = page_q12_classe.frame_page()
+    page_q11_classe = PageQuestion('ecrit', "11. En pourcentage, quelle est la proportion des travaux scolaires que vous avez complétés?", page_q12, [0, 100])
+    page_q11 = page_q11_classe.frame_page()
+    page_q10_classe = PageQuestion('ecrit', "10. En pourcentage, quelle est la proportion des cours auquels vous vous êtes présentés?", page_q11, [0, 100])
+    page_q10 = page_q10_classe.frame_page()
+    page_q9_classe = PageQuestion('ecrit', "9. Combien d'heures par jour consacrez-vous aux activités physiques?", page_q10, [0, 24])
+    page_q9 = page_q9_classe.frame_page()
+    page_q8_classe = PageQuestion('ecrit', "8. Pendant combien d'heures dormez-vous chaque nuit?", page_q9, [0, 24])
+    page_q8 = page_q8_classe.frame_page()
+    page_q7_classe = PageQuestion('ecrit', "7. Combien d'heures passez-vous par jour à utiliser des services de diffusion en continu?", page_q8, [0, 24])
+    page_q7 = page_q7_classe.frame_page()
+    page_q6_classe = PageQuestion('ecrit', "6. Combien d'heures passez-vous par jour à jouer à des jeux vidéo?", page_q7, [0, 24])
+    page_q6 = page_q6_classe.frame_page()
+    page_q5_classe = PageQuestion('ecrit', "5. Combien d'heures passez-vous par jour sur les médias sociaux?", page_q6, [0, 24])
+    page_q5 = page_q5_classe.frame_page()
+    page_q4_classe = PageQuestion('ecrit', "4. Combien d'heures passez-vous par jour sur votre téléphone cellulaire?", page_q5, [0, 24])
+    page_q4 = page_q4_classe.frame_page()
+    page_q3_classe = PageQuestion('ecrit', "3. Combien d'heures passez-vous à étudier chaque jour?", page_q4, [0, 24])
+    page_q3 = page_q3_classe.frame_page()
+    page_q2_classe = PageQuestion('choix', "2. Quel est votre genre?", page_q3, ['Homme', 'Femme'])
+    page_q2 = page_q2_classe.frame_page()
+    page_q1_classe = PageQuestion('ecrit', "1. Quel est votre âge?", page_q2, [17, 25])
+    global page_q1
+    page_q1 = page_q1_classe.frame_page()
 
-#Configuration des boutons de transition de pages
-page_principale_classe.configuration_bouton()
-page_a_propos_classe.configuration_bouton()
-page_q1_classe.configuration_bouton()
-page_q2_classe.configuration_bouton()
-page_q3_classe.configuration_bouton()
-page_q4_classe.configuration_bouton()
-page_q5_classe.configuration_bouton()
-page_q6_classe.configuration_bouton()
-page_q7_classe.configuration_bouton()
-page_q8_classe.configuration_bouton()
-page_q9_classe.configuration_bouton()
-page_q10_classe.configuration_bouton()
-page_q11_classe.configuration_bouton()
-page_q12_classe.configuration_bouton()
-page_q13_classe.configuration_bouton()
-page_q14_classe.configuration_bouton()
-page_q15_classe.configuration_bouton()
-page_q16_classe.configuration_bouton()
-page_resultats1_classe.configuration_bouton()
-page_resultats2_classe.configuration_bouton()
+    #Configuration des boutons de transition de pages
+    page_principale_classe.configuration_bouton()
+    page_a_propos_classe.configuration_bouton()
+    page_q1_classe.configuration_bouton()
+    page_q2_classe.configuration_bouton()
+    page_q3_classe.configuration_bouton()
+    page_q4_classe.configuration_bouton()
+    page_q5_classe.configuration_bouton()
+    page_q6_classe.configuration_bouton()
+    page_q7_classe.configuration_bouton()
+    page_q8_classe.configuration_bouton()
+    page_q9_classe.configuration_bouton()
+    page_q10_classe.configuration_bouton()
+    page_q11_classe.configuration_bouton()
+    page_q12_classe.configuration_bouton()
+    page_q13_classe.configuration_bouton()
+    page_q14_classe.configuration_bouton()
+    page_q15_classe.configuration_bouton()
+    page_q16_classe.configuration_bouton()
+    page_resultats1_classe.configuration_bouton()
+    page_resultats2_classe.configuration_bouton()
 
-#Initialisation de l'avertissement du haut de la page
-avertissement = ttk.Label(root, text='*Cet outil est un exercice pédagogique utilisant des données synthétiques et ne devrait pas être utilisé comme aide à la décision'
-                          , font=('Arial', 16), background='gray80')
-avertissement.place(relwidth=1.0)
+    #Initialisation de l'avertissement du haut de la page
+    avertissement = ttk.Label(root, text='*Cet outil est un exercice pédagogique utilisant des données synthétiques et ne devrait pas être utilisé comme aide à la décision'
+                            , font=('Arial', 16), background='gray80')
+    avertissement.place(relwidth=1.0)
 
-root.mainloop()
+    root.mainloop()
+
+if __name__ == '__main__':
+    initialisation_interface()

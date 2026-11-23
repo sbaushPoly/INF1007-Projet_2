@@ -2,8 +2,8 @@ import pytest
 from pathlib import Path
 import sys
 sys.path.insert(0, 'src')
-from src.modele import Modele, TestModele
-from src.donnees import prediction, amélioration
+from modele import Modele, TestModele
+from main import prediction, amélioration
 
 CAS_IDEAL = {
     "heures_etude": {
@@ -95,5 +95,5 @@ def test_profil_ideal_donne_une_note_satisfaisante(modele, reponses_ideales):
     assert 0 <= note <= 100
     assert note >= 80  
 
-def test_profil_ideal_ne_suggere_pas_d_amelioration(modele, CAS_IDEAL, reponses_ideales):
-    assert amélioration(modele, CAS_IDEAL, reponses_ideales) is None
+def test_profil_ideal_ne_suggere_pas_d_amelioration(modele, reponses_ideales): #enlevé CAS_IDEAL
+    assert amélioration(CAS_IDEAL, reponses_ideales, modele) is None

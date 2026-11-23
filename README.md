@@ -19,11 +19,13 @@ par NeuroCipher sur Kaggle
     - scikit-learn
     - numpy (version 2.5.4)
 
-2. Exécuter src/main.py
+2. Exécuter src/interface.py
 
 ## Structure de code
 - github\workflows
     - tests.yml
+- archive
+    - student_digital_life.csv
 - assets/
     - fleche.png
     - papier_background.png
@@ -44,6 +46,7 @@ par NeuroCipher sur Kaggle
     - test_modele.py
 - DECISIONS.md
 - JOURNAL_IA.md
+- metadata.json
 - questions.txt
 - README.md
 - requirements.txt
