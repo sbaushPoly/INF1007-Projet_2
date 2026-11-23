@@ -2,8 +2,8 @@ import pandas as pd
 import os
 import sys
 sys.path.insert(0, 'src')
-from src.modele import TestModele
-from src.exeptions import DonneeInvalideError
+from modele import TestModele
+from exeptions import DonneeInvalideError
 
 def confirmation_reponse(reponse_recue:str, intervalle:list):
     '''

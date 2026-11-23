@@ -6,9 +6,9 @@ from matplotlib.figure import Figure
 import os
 import sys
 sys.path.insert(0, 'src')
-from src.donnees import charger_donnees
-from src.main import main, conversion_langue, confirmation_reponse
-from src.exeptions import DonneeInvalideError
+from donnees import charger_donnees
+from main import main, conversion_langue, confirmation_reponse
+from exeptions import DonneeInvalideError
 
 def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation:bool = True)->None:
     '''
@@ -246,7 +246,6 @@ class PageQuestion(Page):
         '''
         self.texte_chargement.place(anchor = 'n', relx=0.5, rely = 0.6)
         self.recuperer_reponse()
-
         page_resultats1_classe.bilan = main(PageQuestion._reponses_obtenues)
         page_resultats1_classe.initialisation_indicateurs()
         page_resultats1_classe.affichage_resultat.configure(text=str(round(page_resultats1_classe.bilan['note_actuelle'], 2))+'%')
@@ -471,6 +470,7 @@ def initialisation_interface():
     global root
     root = tkinter.Tk()
     root.geometry('1600x900')
+    #root.geometry(f'{root.winfo_screenwidth()}x{root.winfo_screenheight()}')
     #Initialisation des images utilisés
     chemin_arriere_plan = os.path.join('assets', 'papier_background.png')
     global image_arriere_plan
