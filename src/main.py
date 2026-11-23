@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import sys
 sys.path.insert(0, 'src')
-from modele import TestModele
+from src.modele import TestModele
 
 def confirmation_reponse(reponse_recue:str, intervalle:list):
     '''

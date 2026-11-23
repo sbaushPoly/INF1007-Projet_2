@@ -2,8 +2,8 @@ import pytest
 from pathlib import Path
 import sys
 sys.path.insert(0, 'src')
-from modele import Modele, TestModele
-from main import prediction, amélioration
+from src.modele import Modele, TestModele
+from src.main import prediction, amélioration
 
 CAS_IDEAL = {
     "heures_etude": {

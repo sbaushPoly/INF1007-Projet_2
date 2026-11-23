@@ -6,8 +6,8 @@ from matplotlib.figure import Figure
 import os
 import sys
 sys.path.insert(0, 'src')
-from donnees import charger_donnees
-from main import main, conversion_langue, confirmation_reponse
+from src.donnees import charger_donnees
+from src.main import main, conversion_langue, confirmation_reponse
 
 def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation:bool = True)->None:
     '''

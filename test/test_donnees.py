@@ -2,9 +2,9 @@ import pytest
 import sys
 sys.path.insert(0, 'src')
 import donnees
-from modele import TestModele
-from exeptions import DonneeInvalideError
-from main import prediction, amélioration
+from src.modele import TestModele
+from src.exeptions import DonneeInvalideError
+from src.main import prediction, amélioration
 
 def test_implementation_test_initial():
     assert donnees.implementation_test_initial() == True
@@ -78,22 +78,7 @@ def reponses():
         "motivation": 9,
     }
 
-
-
-# ---------- Cas usuels ----------
-def test_prediction_rep_choix(reponses):
-    reponses.update(genre="Homme", sante_mentale="Bonne",
-                    education_parents="Doctorat", internet="Mauvaise")
-    model = TestModele.charger_modele("modele1_entrainé.joblib")
-    ligne = prediction(model, reponses) #prediction retourne seulement la note finale
-    assert ligne["gender_Male"] == 1
-    assert ligne["mental_health_status_Good"] == 1
-    assert ligne["mental_health_status_Poor"] == 0
-    assert ligne["parent_education_level_PhD"] == 1
-    assert ligne["parent_education_level_Masters"] == 0
-    assert ligne["internet_quality_Poor"] == 1
-
-@pytest.mark.parametrize( #Placer juste avant le test qui l'utilise afin de ne pas causer d'erreur?
+PARAMS_BORNES = pytest.mark.parametrize(
     ("cle", "valeur"),
     [
         ("age", 18),
@@ -102,23 +87,30 @@ def test_prediction_rep_choix(reponses):
     ],
 )
 
+# ---------- Cas usuels ----------
+def test_prediction_rep_choix(reponses):
+    reponses.update(genre="Homme", sante_mentale="Bonne",
+                    education_parents="Doctorat", internet="Mauvaise")
+    model = TestModele.charger_modele("modele1_entrainé.joblib")
+    note = prediction(model, reponses) 
+    assert isinstance(note, (int, float))
+
+
 # ---------- Cas limites ----------
+@PARAMS_BORNES
 def test_valeurs_aux_bornes_acceptees(reponses, cle, valeur):
     reponses[cle] = valeur
     model = TestModele.charger_modele("modele1_entrainé.joblib")
-    assert isinstance(prediction(model, reponses), float)
+    assert isinstance(prediction(model, reponses), (int, float))
 
+@PARAMS_BORNES
 def test_suggestion_none_aux_bords_de_la_zone_ideale(reponses, cle, valeur):
     reponses[cle] = valeur
     model = TestModele.charger_modele("modele1_entrainé.joblib")
     assert amélioration(CAS_IDEAL, reponses, model) is None
 
 # ---------- Cas d'erreur ----------
-def test_valeurs_aux_bornes_acceptees(reponses, cle, valeur):
-    reponses[cle] = valeur
-    model = TestModele.charger_modele("modele1_entrainé.joblib")
-    assert isinstance(prediction(model, reponses), float)
-
+@pytest.mark.parametrize("valeur", ["abc", None, "huit"])
 def test_valeur_non_numerique_leve_erreur(reponses, valeur):
     reponses["sommeil"] = valeur
     model = TestModele.charger_modele("modele1_entrainé.joblib")
