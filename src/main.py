@@ -3,6 +3,7 @@ import os
 import sys
 sys.path.insert(0, 'src')
 from src.modele import TestModele
+from src.exeptions import DonneeInvalideError
 
 def confirmation_reponse(reponse_recue:str, intervalle:list):
     '''
@@ -131,6 +132,16 @@ CAS_IDEAL = {
         "plus": "travailler votre motivation (visez un niveau d'environ (cible) sur 10)",
     },}
 
+CLES_NUMERIQUES = ["age", "heures_etude", "temps_telephone", "temps_reseaux_sociaux",
+                   "temps_jeux", "temps_tele", "sommeil", "temps_exercice",
+                   "taux_presence", "taux_travail", "caffeine", "motivation"]
+
+CATEGORIES = {  # à comparer avec les options de tes PageQuestion
+    "genre": ["male", "female"],
+    "sante_mentale": ["good", "fair", "poor"],
+    "education_parents": ["highschool", "bachelors", "masters", "phd"],
+    "internet": ["good", "average", "poor"],
+}
 def conversion_liste(reponse:list)->dict:
     '''
     Convertit les réponses obtenues de interface.py dans un format utilisable par prediction
@@ -168,6 +179,20 @@ def prediction(model, reponse : dict) -> float:
     Returns:
         note_predite (float): La note prédite par le modèle.
     """
+
+    for cle in CLES_NUMERIQUES + list(CATEGORIES):
+        if cle not in reponse:
+            raise DonneeInvalideError(f"Réponse manquante : {cle}")
+    for cle in CLES_NUMERIQUES:
+        try:
+            valeur = float(reponse[cle])
+        except (TypeError, ValueError):
+            raise DonneeInvalideError(f"Valeur non numérique pour {cle} : {reponse[cle]!r}")
+        if valeur != valeur:  # NaN
+            raise DonneeInvalideError(f"Valeur non numérique pour {cle}")
+    for cle, permises in CATEGORIES.items():
+        if reponse[cle] not in permises:
+            raise DonneeInvalideError(f"Valeur invalide pour {cle} : {reponse[cle]!r}")
 
     # Placer les données dans un nouveau Dictionnaire
     genre = [reponse["genre"]]
@@ -214,7 +239,7 @@ def prediction(model, reponse : dict) -> float:
     note_predite = float(prediction[0])
     if note_predite < 0:
         note_predite = 0
-    elif note_predite > 100:
+    if note_predite > 100:
         note_predite = 100
     return note_predite
 

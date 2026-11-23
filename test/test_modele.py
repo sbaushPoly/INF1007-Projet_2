@@ -67,10 +67,10 @@ def modele():
 @pytest.fixture
 def reponses_ideales():
     return {
-        "genre": "Femme",
-        "sante_mentale": "Bonne",
-        "education_parents": "Doctorat",
-        "internet": "Bonne",
+        "genre": "female",
+        "sante_mentale": "good",
+        "education_parents": "phd",
+        "internet": "good",
         "age": 20,
         "heures_etude": 6,
         "temps_telephone": 1,
@@ -85,10 +85,16 @@ def reponses_ideales():
         "motivation": 9,
     }
 
-def test_predictions_plausibles(modele, jeu_test):
-    X, _ = jeu_test
-    pred = modele.predict(X)
-    assert pred.min() >= 0 and pred.max() <= 100
+class MauvaisModele:
+    def __init__(self, valeur):
+        self.valeur = valeur
+    def predict(self, X):
+        return [self.valeur]
+
+def test_prediction_plausibles(reponses_ideales):
+    assert prediction(MauvaisModele(125.3), reponses_ideales) == 100
+    assert prediction(MauvaisModele(-5), reponses_ideales) == 0
+
 
 def test_profil_ideal_donne_une_note_satisfaisante(modele, reponses_ideales):
     note = prediction(modele, reponses_ideales)

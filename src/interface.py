@@ -8,6 +8,7 @@ import sys
 sys.path.insert(0, 'src')
 from src.donnees import charger_donnees
 from src.main import main, conversion_langue, confirmation_reponse
+from src.exeptions import DonneeInvalideError
 
 def page_suivante(actuelle:tkinter.ttk.Frame, prochaine:tkinter.ttk.Frame, coordonnee:str, direction:int=1, animation:bool = True)->None:
     '''

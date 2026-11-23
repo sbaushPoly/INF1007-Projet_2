@@ -60,10 +60,10 @@ CAS_IDEAL = {
 @pytest.fixture
 def reponses():
     return {
-        "genre": "Femme",
-        "sante_mentale": "Bonne",
-        "education_parents": "Doctorat",
-        "internet": "Bonne",
+        "genre": "female",
+        "sante_mentale": "good",
+        "education_parents": "phd",
+        "internet": "good",
         "age": 20,
         "heures_etude": 6,
         "temps_telephone": 1,
@@ -89,8 +89,8 @@ PARAMS_BORNES = pytest.mark.parametrize(
 
 # ---------- Cas usuels ----------
 def test_prediction_rep_choix(reponses):
-    reponses.update(genre="Homme", sante_mentale="Bonne",
-                    education_parents="Doctorat", internet="Mauvaise")
+    reponses.update(genre="male", sante_mentale="good",
+                    education_parents="phd", internet="poor")
     model = TestModele.charger_modele("modele1_entrainé.joblib")
     note = prediction(model, reponses) 
     assert isinstance(note, (int, float))
