@@ -180,19 +180,19 @@ def prediction(model, reponse : dict) -> float:
         note_predite (float): La note prédite par le modèle.
     """
 
-    for cle in CLES_NUMERIQUES + list(CATEGORIES):
-        if cle not in reponse:
-            raise DonneeInvalideError(f"Réponse manquante : {cle}")
-    for cle in CLES_NUMERIQUES:
-        try:
-            valeur = float(reponse[cle])
-        except (TypeError, ValueError):
-            raise DonneeInvalideError(f"Valeur non numérique pour {cle} : {reponse[cle]!r}")
-        if valeur != valeur:  # NaN
-            raise DonneeInvalideError(f"Valeur non numérique pour {cle}")
-    for cle, permises in CATEGORIES.items():
-        if reponse[cle] not in permises:
-            raise DonneeInvalideError(f"Valeur invalide pour {cle} : {reponse[cle]!r}")
+    # for cle in CLES_NUMERIQUES + list(CATEGORIES):
+    #     if cle not in reponse:
+    #         raise DonneeInvalideError(f"Réponse manquante : {cle}")
+    # for cle in CLES_NUMERIQUES:
+    #     try:
+    #         valeur = float(reponse[cle])
+    #     except (TypeError, ValueError):
+    #         raise DonneeInvalideError(f"Valeur non numérique pour {cle} : {reponse[cle]!r}")
+    #     if valeur != valeur:  # NaN
+    #         raise DonneeInvalideError(f"Valeur non numérique pour {cle}")
+    # for cle, permises in CATEGORIES.items():
+    #     if reponse[cle] not in permises:
+    #         raise DonneeInvalideError(f"Valeur invalide pour {cle} : {reponse[cle]!r}")
 
     # Placer les données dans un nouveau Dictionnaire
     genre = [reponse["genre"]]
