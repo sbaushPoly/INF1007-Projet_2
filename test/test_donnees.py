@@ -1,8 +1,8 @@
 import pytest
 import sys
 sys.path.insert(0, 'src')
-import donnees
-from exeptions import DonneeInvalideError
+import src.donnees
+from src.exeptions import DonneeInvalideError
 
 
 @pytest.fixture
@@ -36,13 +36,13 @@ def reponses():
 )
 
 def test_implementation_test_initial():
-    assert donnees.implementation_test_initial() == True
+    assert src.donnees.implementation_test_initial() == True
 
 # ---------- Cas usuels ----------
 def test_prediction_rep_choix(reponses):
     reponses.update(genre="Homme", sante_mentale="Bonne",
                     education_parents="Doctorat", internet="Mauvaise")
-    ligne = donnees.prediction(reponses)
+    ligne = src.donnees.prediction(reponses)
     assert ligne["gender_Male"] == 1
     assert ligne["mental_health_status_Good"] == 1
     assert ligne["mental_health_status_Poor"] == 0
@@ -54,28 +54,28 @@ def test_prediction_rep_choix(reponses):
 # ---------- Cas limites ----------
 def test_valeurs_aux_bornes_acceptees(reponses, cle, valeur):
     reponses[cle] = valeur
-    assert isinstance(donnees.prediction(reponses), float)
+    assert isinstance(src.donnees.prediction(reponses), float)
 
 def test_suggestion_none_aux_bords_de_la_zone_ideale(reponses, cle, valeur):
     reponses[cle] = valeur
-    assert donnees.amélioration(reponses) is None
+    assert src.donnees.amélioration(reponses) is None
 
 # ---------- Cas d'erreur ----------
 def test_valeurs_aux_bornes_acceptees(reponses, cle, valeur):
     reponses[cle] = valeur
-    assert isinstance(donnees.prediction(reponses), float)
+    assert isinstance(src.donnees.prediction(reponses), float)
 
 def test_valeur_non_numerique_leve_erreur(reponses, valeur):
     reponses["sommeil"] = valeur
     with pytest.raises(DonneeInvalideError):
-        donnees.prediction(reponses)
+        src.donnees.prediction(reponses)
 
 def test_reponse_manquante_leve_erreur(reponses):
     del reponses["caffeine"]
     with pytest.raises(DonneeInvalideError, match="caffeine"):
-        donnees.prediction(reponses)
+        src.donnees.prediction(reponses)
 
 def test_categorie_inconnue_leve_erreur(reponses):
     reponses["genre"] = "Martien"
     with pytest.raises(DonneeInvalideError):
-        donnees.prediction(reponses)
+        src.donnees.prediction(reponses)
