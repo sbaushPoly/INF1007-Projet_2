@@ -52,6 +52,24 @@ par NeuroCipher sur Kaggle
 - requirements.txt
 
 ## Résultat du modèle
+Trois modèles de régression ont été testés afin de prédire la note finale d'examen :
+Modèle 1 : Linear Regression
+Modèle 2 : Ridge
+Modèle 3 : SVR
+
+La performance des modèles est évaluée à l'aide de la métrique RMSE (Root Mean Squared Error). Plus cette valeur est faible, plus les prédictions du modèle sont proches des valeurs réelles.
+Voici les résultats obtenus lors de l'exécution :
+| **Modèle** | **RMSE baseline** | **RMSE validation** |
+| Linear Regression | 18.99 | 12.10 |
+| Ridge | 18.99 | 12.10 |
+| SVR | 18.99 | 16.77 |
+
+## Analyse des résultats
+Les modèles Linear Regression et Ridge obtiennent les meilleurs résultats, avec un RMSE de validation de 12.10.
+Le modèle SVR obtient un RMSE de 16.77, ce qui représente une performance inférieure aux deux autres modèles.
+Les trois modèles obtiennent un résultat meilleur que le baseline, dont le RMSE est de 18.99.
+
+Ainsi, Linear Regression et Ridge sont les deux modèles les plus performants parmi ceux testés.
 
 ## Couverture de tests
 | Nom du fichier | Nombre de lignes couvertes | Nombre de lignes manquées | Couverture | Lignes manquantes |
@@ -66,6 +84,10 @@ par NeuroCipher sur Kaggle
 ## Documentation consultée
 Documentation tkinter : [https://docs.python.org/3/library/tkinter.html#](https://docs.python.org/3/library/tkinter.html#)
 Documentation matplotlib :[https://matplotlib.org/stable/index.html](https://matplotlib.org/stable/index.html)
+Documentation Pandas : [https://pandas.pydata.org/docs/]
+Documentation Scikit-learn : [https://scikit-learn.org/stable/]
+Documentation Pytest : (https://docs.pytest.org/en/stable/)
+Documentation Pathlib : (https://docs.python.org/3/library/pathlib.html)
 
 ## Outil du chapitre 7 utilisé
 Nous avons utilisé lambda à la ligne 279 de main.py afin de choisir la proposition à faire qui a le plus grand écart.
