@@ -60,6 +60,7 @@ Modèle 3 : SVR
 La performance des modèles est évaluée à l'aide de la métrique RMSE (Root Mean Squared Error). Plus cette valeur est faible, plus les prédictions du modèle sont proches des valeurs réelles.
 Voici les résultats obtenus lors de l'exécution :
 | **Modèle** | **RMSE baseline** | **RMSE validation** |
+| ----------- | ----------- | ----------- |
 | Linear Regression | 18.99 | 12.10 |
 | Ridge | 18.99 | 12.10 |
 | SVR | 18.99 | 16.77 |
@@ -84,10 +85,10 @@ Ainsi, Linear Regression et Ridge sont les deux modèles les plus performants pa
 ## Documentation consultée
 Documentation tkinter : [https://docs.python.org/3/library/tkinter.html#](https://docs.python.org/3/library/tkinter.html#)
 Documentation matplotlib :[https://matplotlib.org/stable/index.html](https://matplotlib.org/stable/index.html)
-Documentation Pandas : [https://pandas.pydata.org/docs/]
-Documentation Scikit-learn : [https://scikit-learn.org/stable/]
-Documentation Pytest : (https://docs.pytest.org/en/stable/)
-Documentation Pathlib : (https://docs.python.org/3/library/pathlib.html)
+Documentation Pandas : https://pandas.pydata.org/docs/
+Documentation Scikit-learn : https://scikit-learn.org/stable/
+Documentation Pytest : https://docs.pytest.org/en/stable/
+Documentation Pathlib : https://docs.python.org/3/library/pathlib.html
 
 ## Outil du chapitre 7 utilisé
 Nous avons utilisé lambda à la ligne 279 de main.py afin de choisir la proposition à faire qui a le plus grand écart.
