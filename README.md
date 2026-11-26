@@ -57,7 +57,7 @@ Modèle 1 : Linear Regression,
 Modèle 2 : Ridge,
 Modèle 3 : SVR.
 
-La performance des modèles est évaluée à l'aide de la métrique RMSE (Root Mean Squared Error). Plus cette valeur est faible, plus les prédictions du modèle sont proches des valeurs réelles. Pour calculer l'erreur quadratique moyenne de référence (la baseline), le RMSE à été calculé en considérant que le modèle prédit constamment une valeur égale à la moyenne des valeurs observées.
+La performance des modèles est évaluée à l'aide de la métrique RMSE (Root Mean Squared Error). Plus cette valeur est faible, plus les prédictions du modèle sont proches des valeurs réelles. Pour calculer l'erreur quadratique moyenne de référence (la baseline), le RMSE a été calculé en considérant que le modèle prédit constamment une valeur égale à la moyenne des valeurs observées.
 Voici les résultats obtenus lors de l'exécution :
 | **Modèle** | **RMSE baseline** | **RMSE validation** |
 | ----------- | ----------- | ----------- |
